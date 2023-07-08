@@ -30,14 +30,14 @@ project(
 )
 
 # post-project cmake files
-include(cmake/oatpp.cmake)
+include(cmake/boost.cmake)
+include(cmake/crow.cmake)
 
 set(root_dir ${CMAKE_CURRENT_LIST_DIR})
 set(internal_dir ${root_dir}/internal)
 set(third_party_dir ${root_dir}/third_party)
 
 include_directories(${root_dir}/internal)
+include_directories(${third_party_dir}/nlohmann)
 
-
-
-add_executable(2040_LiteBrite main.cpp)
+add_subdirectory(application)
