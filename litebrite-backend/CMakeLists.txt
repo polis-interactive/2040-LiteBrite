@@ -32,12 +32,21 @@ project(
 # post-project cmake files
 include(cmake/boost.cmake)
 include(cmake/crow.cmake)
+include(cmake/crypto.cmake)
+include(cmake/sqlite_orm.cmake)
 
 set(root_dir ${CMAKE_CURRENT_LIST_DIR})
 set(internal_dir ${root_dir}/internal)
 set(third_party_dir ${root_dir}/third_party)
 
 include_directories(${root_dir}/internal)
-include_directories(${third_party_dir}/nlohmann)
+add_definitions(-DJWT_DISABLE_PICOJSON=1)
+include_directories(${third_party_dir})
 
-add_subdirectory(application)
+add_subdirectory(${internal_dir}/infrastructure)
+
+if(CMAKE_BUILD_TYPE STREQUAL Debug)
+    add_subdirectory(${root_dir}/test)
+endif()
+
+add_subdirectory(${root_dir}/application)

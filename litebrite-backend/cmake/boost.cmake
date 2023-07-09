@@ -9,4 +9,5 @@ set(Boost_Version 1.81.0)
 
 set(Boost_NO_WARN_NEW_VERSIONS 1)
 find_package(Boost ${Boost_Version} REQUIRED COMPONENTS system regex)
+message("Found Boost")
 include_directories(${BOOST_INCLUDEDIR})
