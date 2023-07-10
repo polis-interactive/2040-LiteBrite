@@ -22,6 +22,12 @@ namespace infrastructure {
         static std::shared_ptr<Db> Create(const DbConfig &conf);
         explicit Db(const DbConfig &conf);
 
+        // gets return nullptr on failure
+        [[nodiscard]] std::unique_ptr<domain::User> GetUser(const int user_id);
+        [[nodiscard]] std::unique_ptr<domain::User> GetUserWithCredentials(const int user_id);
+        [[nodiscard]] bool CreateUser(const domain::User &user);
+        [[nodiscard]] bool UpdateUser(const domain::User &user);
+
         // no copy assignment, no empty assignment
         Db() = delete;
         Db (const Db&) = delete;
