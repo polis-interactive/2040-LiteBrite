@@ -33,7 +33,7 @@ project(
 include(cmake/boost.cmake)
 include(cmake/crow.cmake)
 include(cmake/crypto.cmake)
-include(cmake/sqlite_orm.cmake)
+include(cmake/sqlitecpp.cmake)
 
 set(root_dir ${CMAKE_CURRENT_LIST_DIR})
 set(internal_dir ${root_dir}/internal)

@@ -58,7 +58,7 @@ namespace infrastructure {
 
         mutable std::shared_mutex _jwt_mutex;
         std::set<std::string> _jwt_store;
-        std::atomic<unsigned long> _jwt_counter = 0;
+        std::atomic<unsigned long> _jwt_counter = { 0 };
 
         const std::string _pepper;
         const std::string _jwt_secret;

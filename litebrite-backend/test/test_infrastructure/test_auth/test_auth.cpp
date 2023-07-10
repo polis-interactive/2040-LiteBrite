@@ -106,6 +106,8 @@ TEST_CASE("Infrastructure_Auth-JwtStore") {
     REQUIRE_EQ(out_user->is_admin, login_user.is_admin);
     REQUIRE_EQ(out_user->site_id, login_user.site_id);
 
+    std::cout << token << std::endl;
+
     /* mess up the token; make sure that fails */
     auto messed_up_token = token;
     std::swap(messed_up_token[1], messed_up_token[4]);

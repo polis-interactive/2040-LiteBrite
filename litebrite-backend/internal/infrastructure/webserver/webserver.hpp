@@ -23,7 +23,7 @@ namespace infrastructure {
     private:
         void initialize();
         void run();
-        std::atomic_bool _is_started = false;
+        std::atomic<bool> _is_started = { false };
         std::unique_ptr<std::thread> _server_thread = nullptr;
         crow::SimpleApp _app;
     };
