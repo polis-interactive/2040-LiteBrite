@@ -20,10 +20,10 @@
 namespace infrastructure {
 
     struct AuthConfig {
-        std::string pepper;
-        std::string jwt_secret;
-        utils::duration jwt_expiry;
-        utils::duration jwt_refresh;
+        const std::string pepper;
+        const std::string jwt_secret;
+        const utils::duration jwt_expiry;
+        const utils::duration jwt_refresh;
     };
 
     class Auth {
