@@ -2,13 +2,11 @@
 // Created by broosegoose on 7/9/23.
 //
 
+#include <iostream>
+
 #include "db.hpp"
 
 #include "utils/files.hpp"
-
-/*
- * I'll put migrations up here; or maybe I'll have a migrations header / cpp file
- */
 
 namespace infrastructure {
 
@@ -21,7 +19,7 @@ namespace infrastructure {
     }
 
     Db::Db(const infrastructure::DbConfig &conf):
-        _db_path(conf.db_path), _db_name(conf.db_name), _seed_db(conf.seed_db)
+        _db_path(conf.db_path), _db_name(conf.db_name), _seed_db(conf.seed_db), _clear_db(conf.clear_db)
     {}
 
     bool Db::initialize() {
@@ -36,57 +34,56 @@ namespace infrastructure {
             return false;
         }
         try {
+            int32_t migration_number = 0;
+            int32_t seed_hash = 0;
+            const bool db_exists = ternary_file_exists == utils::Ternary::TRUE;
+            if (db_exists) {
+                // this will throw if the file was invalid
+                const auto header = SQLite::Database::getHeaderInfo(db_file);
+                migration_number = header.userVersion;
+                seed_hash = header.applicationId;
+            }
             _db = std::make_unique<SQLite::Database>(db_file, SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE);
             (*_db).exec("PRAGMA foreign_keys = ON;");
-            migrateDb();
-            if (_clear_db) {
+            migrateDb(migration_number);
+            if (_clear_db && db_exists) {
                 clearDb();
+                seed_hash = 0;
             }
             if (_seed_db) {
-                seedDb();
+                seedDb(seed_hash);
             }
             return true;
         } catch (std::exception &e) {
+            std::cout << e.what() << std::endl;
             return false;
         }
     }
 
-    void Db::migrateDb() {
-        SQLite::Statement query(*_db, "PRAGMA user_version;");
-        int32_t version = 0;
-        if (query.executeStep()) {
-            version = query.getColumn(0);
-        }
-        if (version > Db::_migrations.size()) {
+    void Db::migrateDb(const int32_t current_migration_number) {
+        const auto migration_count = Db::_migrations.size();
+        if (current_migration_number > migration_count) {
             throw std::runtime_error("Migrations lost a hommie");
+        } else if (current_migration_number == migration_count) {
+            return;
         }
-        auto begin = Db::_migrations.begin() + version;
+        auto begin = Db::_migrations.begin() + current_migration_number;
         auto end = Db::_migrations.end();
         for (auto it = begin; it != end; ++it) {
             (*it)(_db);
         }
-        SQLite::Statement update(*_db, "PRAGMA user_version = ?;");
-        update.bind(1, (int32_t) Db::_migrations.size());
+        SQLite::Statement update(*_db, "PRAGMA user_version = " + std::to_string(migration_count) + ";");
         update.exec();
     }
 
-    void Db::seedDb() {
+    void Db::seedDb(const int32_t current_seed_hash) {
         const auto seed = seedData();
-        const auto seedDataHash = hashSeedData(seed);
-
-        SQLite::Statement query(*_db, "PRAGMA application_id;");
-        int32_t storedHash = 0;
-        if (query.executeStep()) {
-            storedHash = query.getColumn(0);
-        }
-
-        if (seedDataHash != storedHash) {
+        const auto seed_data_hash = hashSeedData(seed);
+        if (seed_data_hash != current_seed_hash) {
             clearDb();
             insertSeedData(seed);
-            SQLite::Statement update(*_db, "PRAGMA application_id = ?;");
-            update.bind(1, seedDataHash);
+            SQLite::Statement update(*_db, "PRAGMA application_id = " +  std::to_string(seed_data_hash) + ";");
             update.exec();
         }
-
     }
 }

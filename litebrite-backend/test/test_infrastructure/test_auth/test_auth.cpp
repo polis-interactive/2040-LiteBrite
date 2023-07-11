@@ -5,7 +5,6 @@
 #include <doctest.h>
 #include <thread>
 #include <optional>
-#include <algorithm>
 #include <iostream>
 
 #include "utils/clock.hpp"
@@ -14,7 +13,7 @@
 
 #include "infrastructure/auth/auth.hpp"
 
-[[nodiscard]] infrastructure::AuthConfig GetTextConfig(
+[[nodiscard]] infrastructure::AuthConfig GetAuthTestConfig(
     std::optional<utils::duration> expiry,
     std::optional<utils::duration> refresh
 ) {
@@ -28,13 +27,13 @@
 }
 
 TEST_CASE("Infrastructure_Auth-Creation") {
-    const auto conf = GetTextConfig({}, {});
-    std::shared_ptr<infrastructure::Auth> auth = infrastructure::Auth::Create(conf);
+    const auto conf = GetAuthTestConfig({}, {});
+    auto auth = infrastructure::Auth::Create(conf);
     REQUIRE((bool)(auth != nullptr));
 }
 
 TEST_CASE("Infrastructure_Auth-HashPassword") {
-    const auto conf = GetTextConfig({}, {});
+    const auto conf = GetAuthTestConfig({}, {});
     auto auth = infrastructure::Auth::Create(conf);
 
     const std::string password = "test-password";
@@ -55,7 +54,7 @@ TEST_CASE("Infrastructure_Auth-HashPassword") {
 }
 
 TEST_CASE("Infrastructure_Auth-PasswordRetrieval") {
-    const auto conf = GetTextConfig({}, {});
+    const auto conf = GetAuthTestConfig({}, {});
     auto auth = infrastructure::Auth::Create(conf);
 
     auto db_user = domain::User {
@@ -80,7 +79,7 @@ TEST_CASE("Infrastructure_Auth-PasswordRetrieval") {
 }
 
 TEST_CASE("Infrastructure_Auth-JwtStore") {
-    const auto conf = GetTextConfig({}, {});
+    const auto conf = GetAuthTestConfig({}, {});
     auto auth = infrastructure::Auth::Create(conf);
 
     auto db_user = domain::User {
@@ -106,8 +105,6 @@ TEST_CASE("Infrastructure_Auth-JwtStore") {
     REQUIRE_EQ(out_user->is_admin, login_user.is_admin);
     REQUIRE_EQ(out_user->site_id, login_user.site_id);
 
-    std::cout << token << std::endl;
-
     /* mess up the token; make sure that fails */
     auto messed_up_token = token;
     std::swap(messed_up_token[1], messed_up_token[4]);
@@ -117,8 +114,7 @@ TEST_CASE("Infrastructure_Auth-JwtStore") {
 }
 
 TEST_CASE("Infrastructure_Auth-JwtStoreRefresh") {
-
-    const auto conf = GetTextConfig({ 30min }, { 30min });
+    const auto conf = GetAuthTestConfig({30min}, {30min});
     auto auth = infrastructure::Auth::Create(conf);
 
     auto db_user = domain::User {
@@ -147,8 +143,7 @@ TEST_CASE("Infrastructure_Auth-JwtStoreRefresh") {
 }
 
 TEST_CASE("Infrastructure_Auth-JwtExpiry") {
-
-    const auto conf = GetTextConfig({ 0s }, { 0s });
+    const auto conf = GetAuthTestConfig({0s}, {0s});
     auto auth = infrastructure::Auth::Create(conf);
 
     auto db_user = domain::User {

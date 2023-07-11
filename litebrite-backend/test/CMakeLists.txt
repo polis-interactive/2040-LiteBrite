@@ -10,9 +10,10 @@ set(
     tests
         main.cpp
         test_infrastructure/test_auth/test_auth.cpp
+        test_infrastructure/test_db/test_creation.cpp
 )
 
-set(tests_link_libraries pthread auth)
+set(tests_link_libraries pthread auth db)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ggdb -O0")
 add_definitions(-DTEST_DIR="${CMAKE_CURRENT_SOURCE_DIR}")

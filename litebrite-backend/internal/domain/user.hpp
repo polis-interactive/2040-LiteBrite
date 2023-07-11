@@ -11,6 +11,7 @@
 namespace domain {
 
     struct User {
+
         int id;
         std::string email;
         /* salted and peppered password */
@@ -32,15 +33,18 @@ namespace domain {
             return j;
         }
 
-        void from_json(const nlohmann::json& j) {
-            j.at("id").get_to(id);
-            j.at("email").get_to(email);
-            j.at("password").get_to(password);
-            j.at("salt").get_to(salt);
-            j.at("needs_password_change").get_to(needs_password_change);
-            j.at("is_admin").get_to(is_admin);
-            j.at("site_id").get_to(site_id);
+        static User from_json(const nlohmann::json& j) {
+            return {
+                .id = j.value("id", -1),
+                .email = j.at("email"),
+                .password = j.at("password"),
+                .salt = j.at("salt"),
+                .needs_password_change = j.at("needs_password_change"),
+                .is_admin = j.at("is_admin"),
+                .site_id = j.at("site_id"),
+            };
         }
+
     };
 }
 

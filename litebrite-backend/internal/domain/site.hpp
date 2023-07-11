@@ -10,23 +10,26 @@
 
 namespace domain {
 
-    class Site {
-        int id;
-        std::string subdomain;
+    struct Site {
+
+        int id = -1;
         std::string name;
+        std::string subdomain;
 
         [[nodiscard]] nlohmann::json to_json() const {
             nlohmann::json j;
             j["id"] = id;
-            j["subdomain"] = subdomain;
             j["name"] = name;
+            j["subdomain"] = subdomain;
             return j;
         }
 
-        void from_json(const nlohmann::json& j) {
-            j.at("id").get_to(id);
-            j.at("subdomain").get_to(subdomain);
-            j.at("name").get_to(name);
+        static domain::Site from_json(const nlohmann::json& j) {
+            return {
+                .id = j.value("id", -1),
+                .name = j.at("name"),
+                .subdomain = j.at("subdomain"),
+            };
         }
 
     };

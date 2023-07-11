@@ -51,6 +51,7 @@ namespace infrastructure {
         [[nodiscard]] bool CreateOrUpdateSite(const domain::Site &site);
         [[nodiscard]] std::unique_ptr<domain::Site> GetSite(const std::string site_domain);
         [[nodiscard]] std::unique_ptr<domain::Site> GetSite(const int site_id);
+        [[nodiscard]] std::vector<domain::Site> GetAllSites();
         [[nodiscard]] bool UpdateSite(const domain::User &user);
         [[nodiscard]] bool DeleteSite(const domain::User &user);
 
@@ -60,10 +61,10 @@ namespace infrastructure {
         Db& operator= (const Db&) = delete;
     private:
         bool initialize();
-        void migrateDb();
+        void migrateDb(int32_t current_migration_number);
         static std::vector<std::function<void(DatabasePtr &)>> _migrations;
         void clearDb();
-        void seedDb();
+        void seedDb(int32_t current_seed_hash);
         nlohmann::json seedData();
         void insertSeedData(const nlohmann::json &seed);
         const bool _seed_db;
