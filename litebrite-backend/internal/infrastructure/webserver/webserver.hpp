@@ -25,7 +25,7 @@ namespace infrastructure {
         void run();
         std::atomic<bool> _is_started = { false };
         std::unique_ptr<std::thread> _server_thread = nullptr;
-        crow::SimpleApp _app;
+        std::unique_ptr<crow::SimpleApp> _app = nullptr;
     };
 }
 

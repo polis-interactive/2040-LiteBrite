@@ -14,9 +14,10 @@ namespace infrastructure {
 
     void Webserver::initialize() {
         std::cout << "infrastructure::Server(): initializing server" << std::endl;
-        _app.signal_clear();
-        CROW_ROUTE(_app, "/")([]() {
-            return "Hello, melissa marianas trench!";
+        _app = std::make_unique<crow::SimpleApp>();
+        _app->signal_clear();
+        CROW_ROUTE((*_app), "/")([]() {
+            return "fk the world";
         });
         std::cout << "infrastructure::Server(): initialized!" << std::endl;
 
@@ -45,7 +46,7 @@ namespace infrastructure {
         _is_started = false;
         if (_server_thread != nullptr) {
             if (_server_thread->joinable()) {
-                _app.stop();
+                _app->stop();
                 _server_thread->join();
             }
             _server_thread.reset();
@@ -56,7 +57,11 @@ namespace infrastructure {
 
     void Webserver::run() {
         std::cout << "infrastructure::Server::run(): running on port 8080 async" << std::endl;
-        _app.port(8080).concurrency(2).run();
+        _app->
+            port(8080)
+            .use_compression(crow::compression::algorithm::GZIP)
+            .concurrency(4)
+            .run();
         std::cout << "infrastructure::Server::run(): server stopped" << std::endl;
     }
 }
