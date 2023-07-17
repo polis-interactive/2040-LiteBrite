@@ -28,9 +28,16 @@ server {
 
 
 # rate limiting
-limit_req_zone $binary_remote_addr zone=one:10m rate=1r/s;
+# need to update these to allow less reqs per sec on the backend
+
+limit_req_zone $binary_remote_addr zone=static:10m rate=5r/s;
+limit_conn_zone $server_name zone=static_server:10m;
+
+limit_req_zone $binary_remote_addr zone=api:10m rate=1r/s;
+limit_conn_zone $server_name zone=api_server:10m;
+
+
 limit_conn_zone $binary_remote_addr zone=addr:10m;
-limit_conn_zone $server_name zone=server:10m;
 
 
 # lighting currently goes to the thompson
@@ -50,7 +57,7 @@ server {
     add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";
     add_header X-Frame-Options DENY;
     add_header X-Content-Type-Options nosniff;
-    add_header Content-Security-Policy "default-src 'self' lighting.polis.tv *.lighting.polis.tv;";
+    add_header Content-Security-Policy "default-src 'self' lighting.polis.tv *.lighting.polis.tv; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; img-src 'self' 'unsafe-inline' data:;";
     add_header X-XSS-Protection "1; mode=block";
     add_header Referrer-Policy "origin";
 
@@ -58,15 +65,33 @@ server {
     client_body_timeout 5s;
     client_header_timeout 5s;
 
+    root /var/www/lighting.polis.tv/public;
+
+    # static 404 created by nuxt
+    error_page 404 /404.html;
+    location = /404.html {
+        internal;
+    }
+
+
     location / {
+        try_files $uri $uri/ $uri.html = 404;
+
+        limit_req zone=static burst=10;
+        limit_conn addr 5;
+        limit_conn static_server 50;
+    }
+
+    location /api/ {
         proxy_pass http://20.0.0.3:8080;
+
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
 
-	limit_req zone=one burst=5;
-	limit_conn addr 10;
-	limit_conn server 100;
+	    limit_req zone=api burst=5;
+	    limit_conn addr 5;
+	    limit_conn api_server 50;
     }
 }
 
