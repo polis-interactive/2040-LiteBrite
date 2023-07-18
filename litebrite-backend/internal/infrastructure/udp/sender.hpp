@@ -24,7 +24,7 @@ namespace infrastructure {
         [[nodiscard]] static UdpSenderPtr Create(const UdpSenderConfig &config, net::io_context &context);
         UdpSender(const UdpSenderConfig &config, net::io_context &context);
         void Start();
-        void Send(utils::SizedBufferPacketPtr &&packet);
+        void Send(utils::SizedBufferPtr &&packet);
         void Stop();
         ~UdpSender();
         // no copy assignment, no empty assignment
@@ -34,7 +34,7 @@ namespace infrastructure {
     private:
         void doStart(bool is_initial_start);
         void onStart(error_code ec);
-        void write(utils::SizedBufferPacketPtr &&packet);
+        void write(utils::SizedBufferPtr &&packet);
         /*
          * TODO: add timeout on write; but that might not be necessary b/c its udp? but it
          *  might be necessary if something is up with the os socket and we need a new one?
@@ -48,7 +48,7 @@ namespace infrastructure {
         const udp::endpoint _remote_endpoint;
         std::unique_ptr<udp::socket> _socket = {nullptr};
         net::strand<net::io_context::executor_type> _strand;
-        std::queue<utils::SizedBufferPacketPtr> _send_packet_queue = {};
+        std::queue<utils::SizedBufferPtr> _send_packet_queue = {};
         std::vector<char> _buffer;
     };
 }

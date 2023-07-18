@@ -66,7 +66,7 @@ namespace infrastructure {
         _is_started = true;
     }
 
-    void UdpSender::Send(utils::SizedBufferPacketPtr &&packet) {
+    void UdpSender::Send(utils::SizedBufferPtr &&packet) {
         if (_is_stopped || !_is_started) return;
         net::post(
             _strand,
@@ -74,7 +74,7 @@ namespace infrastructure {
         );
     }
 
-    void UdpSender::write(utils::SizedBufferPacketPtr &&packet) {
+    void UdpSender::write(utils::SizedBufferPtr &&packet) {
         if (_is_stopped || !_is_started) return;
         _send_packet_queue.push(std::move(packet));
         if (_send_packet_queue.size() == 1) {
@@ -84,15 +84,9 @@ namespace infrastructure {
 
     void UdpSender::doWrite() {
         const auto &packet_ptr = _send_packet_queue.front();
-        const auto &header_ptr = packet_ptr->_header;
-        const auto &header_size = header_ptr->GetSize();
-        const auto &body_ptr = packet_ptr->_body;
-        const auto &body_size = body_ptr->GetSize();
-        _buffer.resize(header_size + body_size);
-        std::memcpy(_buffer.data(), header_ptr->GetMemory(), header_size);
-        std::memcpy(_buffer.data() + header_size, body_ptr->GetMemory(), body_size);
         _socket->async_send(
-            boost::asio::buffer(_buffer), std::bind_front(&UdpSender::onWrite, shared_from_this())
+            net::buffer(packet_ptr->GetMemory(), packet_ptr->GetSize()),
+            std::bind_front(&UdpSender::onWrite, shared_from_this())
         );
     }
 
@@ -119,7 +113,7 @@ namespace infrastructure {
     void UdpSender::disconnect(const bool reconnect) {
         _is_started = false;
         if (_socket->is_open()) {
-            boost::system::error_code ec;
+            error_code ec;
             _socket->close(ec);
             if (ec) {
                 std::cout << "UdpSender::disconnect failed to close with ec: " << ec << std::endl;
