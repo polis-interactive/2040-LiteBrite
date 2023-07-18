@@ -12,6 +12,7 @@
 #include <iostream>
 
 namespace net = boost::asio;
+using boost::asio::ip::udp;
 using boost::asio::ip::tcp;
 using boost::system::error_code;
 
