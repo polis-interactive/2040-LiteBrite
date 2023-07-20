@@ -22,6 +22,7 @@ namespace infrastructure {
 
     void UdpSender::Start() {
         if (!_is_stopped) return;
+        _is_stopped = false;
         doStart(true);
     }
 

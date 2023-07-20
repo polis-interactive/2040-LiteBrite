@@ -1,6 +1,6 @@
 
 
-set(SOURCES controller.cpp)
+set(SOURCES universe.cpp controller.cpp artnet.cpp)
 set(TARGET_LIBS pthread udp)
 
 add_library(artnet STATIC ${SOURCES})

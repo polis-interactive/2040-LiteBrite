@@ -9,6 +9,8 @@
 
 #include "utils/buffers.hpp"
 
+#include "domain/installation.hpp"
+
 #include "infrastructure/udp/sender.hpp"
 
 #include "packet.hpp"
@@ -17,16 +19,10 @@
 
 namespace infrastructure {
 
-    struct ArtnetUniverseMapping {
-        unsigned int pixel_count;
-        unsigned int pixel_width;
-        unsigned int start_position;
-    };
-
     struct ArtNetControllerConfig {
         std::string host;
-        std::map<unsigned int, ArtnetUniverseMapping> universes;
         unsigned int buffer_count;
+        std::map<unsigned int, domain::Universe> &universes;
     };
 
     class ArtNetController;
@@ -38,8 +34,9 @@ namespace infrastructure {
         static ArtNetControllerPtr Create(const ArtNetControllerConfig &config, net::io_context &context);
         ArtNetController(const ArtNetControllerConfig &config, net::io_context &context);
         void Start();
-        void Send(utils::SizedBufferPtr &artnet_pixels);
+        void Post(utils::SizedBufferPtr &artnet_pixels);
         void Stop();
+        ~ArtNetController();
         // no copy assignment, no empty assignment
         ArtNetController() = delete;
         ArtNetController (const ArtNetController&) = delete;

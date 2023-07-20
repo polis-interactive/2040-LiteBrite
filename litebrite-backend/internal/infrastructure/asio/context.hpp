@@ -33,10 +33,13 @@ namespace infrastructure {
         const int pool_size;
     };
 
+    class AsioContext;
+    typedef std::shared_ptr<AsioContext> AsioContextPtr;
+
     class AsioContext: public std::enable_shared_from_this<AsioContext> {
     public:
 
-        static std::shared_ptr<AsioContext> Create(const AsioContextConfig &config) {
+        static AsioContextPtr Create(const AsioContextConfig &config) {
             return std::make_shared<AsioContext>(config);
         }
 
@@ -98,7 +101,6 @@ namespace infrastructure {
         net::io_context _context;
         net::executor_work_guard<net::io_context::executor_type> _guard;
         std::vector<std::jthread> _pool;
-        std::atomic<bool> _stop = { false };
         std::atomic<bool> _started = { false };
     };
 

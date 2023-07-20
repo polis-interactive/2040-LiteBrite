@@ -24,6 +24,9 @@ namespace infrastructure {
         [[nodiscard]] static UdpSenderPtr Create(const UdpSenderConfig &config, net::io_context &context);
         UdpSender(const UdpSenderConfig &config, net::io_context &context);
         void Start();
+        [[nodiscard]] bool CheckIsStarted() const {
+            return _is_started;
+        }
         void Send(utils::SizedBufferPtr &&packet);
         void Stop();
         ~UdpSender();

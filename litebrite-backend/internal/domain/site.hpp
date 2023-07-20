@@ -24,7 +24,7 @@ namespace domain {
             return j;
         }
 
-        static domain::Site from_json(const nlohmann::json& j) {
+        static Site from_json(const nlohmann::json& j) {
             return {
                 .id = j.value("id", -1),
                 .name = j.at("name"),
