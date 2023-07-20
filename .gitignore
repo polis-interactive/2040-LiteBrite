@@ -1,3 +1,9 @@
 cmake-build-*
 .idea
 polis_openvpn_server_accessKeys.csv
+PolisOpenvpnCredentials.pem
+node_modules
+.nuxt
+.output
+dist
+
