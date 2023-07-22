@@ -14,8 +14,8 @@
 namespace infrastructure {
 
     struct ArtNetConfig {
-        domain::Installation installation;
-        unsigned int buffer_count;
+        domain::installation::Layout installation_layout;
+        unsigned int artnet_buffer_count;
     };
 
     class ArtNet;

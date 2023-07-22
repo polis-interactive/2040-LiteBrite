@@ -75,7 +75,7 @@ namespace infrastructure {
     }
 
     [[nodiscard]] std::string Auth::CreateJwt(const domain::User &user) {
-        const auto now = Clock::now();
+        const auto now = utils::Clock::now();
         const auto token = jwt::create<traits>()
                 .set_type("JWT")
                 .set_issuer("lighting.polis.tv")
@@ -124,7 +124,7 @@ namespace infrastructure {
             user->site_id = decoded_token.get_payload_claim("site_id").as_integer();
 
             // Check if token is about to expire / has expired
-            auto now = Clock::now();
+            auto now = utils::Clock::now();
             auto expiry = decoded_token.get_expires_at();
             if (expiry - now <= _jwt_refresh) {
                 // refresh the jwt

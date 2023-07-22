@@ -33,10 +33,10 @@
             }
         })"
     );
-    auto installation = domain::Installation::from_json(installation_json);
+    auto layout = domain::installation::Layout::from_json(installation_json);
     return {
-        .installation = installation,
-        .buffer_count = 3
+        .installation_layout = layout,
+        .artnet_buffer_count = 3
     };
 }
 

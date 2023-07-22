@@ -14,8 +14,8 @@
 #include "infrastructure/auth/auth.hpp"
 
 [[nodiscard]] infrastructure::AuthConfig GetAuthTestConfig(
-    std::optional<utils::duration> expiry,
-    std::optional<utils::duration> refresh
+    std::optional<utils::Duration> expiry,
+    std::optional<utils::Duration> refresh
 ) {
     return {
         .pepper = "TEST_PEPPER",
