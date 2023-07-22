@@ -36,7 +36,7 @@
     auto installation = domain::Installation::from_json(installation_json);
     return {
         .installation = installation,
-        .buffer_count = 3
+        .artnet_buffer_count = 3
     };
 }
 

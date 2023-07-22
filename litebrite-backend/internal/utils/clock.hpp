@@ -7,10 +7,11 @@
 
 #include <chrono>
 using namespace std::literals;
-typedef std::chrono::high_resolution_clock Clock;
 
 namespace utils {
-    typedef std::chrono::duration<long int> duration;
+    typedef std::chrono::duration<long int> Duration;
+    typedef std::chrono::duration<double> QuickDuration;
+    typedef std::chrono::high_resolution_clock Clock;
 }
 
 #endif //UTILS_CLOCK_HPP

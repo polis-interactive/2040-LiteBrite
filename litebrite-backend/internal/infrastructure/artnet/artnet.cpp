@@ -23,7 +23,7 @@ namespace infrastructure {
             _controllers.insert({
                 host, ArtNetController::Create({
                     .host = host,
-                    .buffer_count = config.buffer_count,
+                    .buffer_count = config.artnet_buffer_count,
                     .universes = controller_universes
                 }, context)
             });
