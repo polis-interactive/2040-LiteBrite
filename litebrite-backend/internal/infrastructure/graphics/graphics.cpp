@@ -31,7 +31,7 @@ namespace infrastructure {
         }
     }
 
-    void Graphics::generateBuffers(const domain::UniverseMap universes, const unsigned int buffer_count) {
+    void Graphics::generateBuffers(const domain::UniverseMap &universes, const unsigned int buffer_count) {
         auto max_universe = std::max_element(universes.begin(), universes.end(),
             [](const auto& a, const auto& b) {
                 return a.second.GetLastLength() > b.second.GetLastLength();
@@ -106,7 +106,19 @@ namespace infrastructure {
     }
 
     void Graphics::render(GraphicsBufferPtr &buffer) {
-
+        /* i still need color correction, maybe gamma, but great for now */
+        switch (_display_type) {
+            case domain::DisplayType::RGBW:
+                buffer->RenderColor(_rgbw_color);
+                break;
+            case domain::DisplayType::RGB:
+                buffer->RenderColor(_rgb_color);
+                break;
+            case domain::DisplayType::RGB_WITH_W_INTERPOLATION:
+                auto c_rgbw = domain::CRGB::SubtractWhite(_rgb_color, _white_color);
+                buffer->RenderColor(c_rgbw);
+                break;
+        }
     }
 
     void Graphics::queueBuffer(GraphicsBuffer *buffer) {
@@ -114,7 +126,7 @@ namespace infrastructure {
         _buffers.push(buffer);
     }
 
-    void GraphicsBuffer::RenderColor(const domain::CRGB c_rgb) const {
+    void GraphicsBuffer::RenderColor(const domain::CRGB &c_rgb) {
         // Fill the first 3 bytes.
         std::memcpy((void *) _data.data(), c_rgb.raw, 3);
 
@@ -126,7 +138,7 @@ namespace infrastructure {
             bytes_filled += bytes_to_copy;
         }
     }
-    void GraphicsBuffer::RenderColor(const domain::CRGBW c_rgbw) const {
+    void GraphicsBuffer::RenderColor(const domain::CRGBW &c_rgbw) {
         // Fill the first 4 bytes.
         std::memcpy((void *) _data.data(), c_rgbw.raw, 3);
 

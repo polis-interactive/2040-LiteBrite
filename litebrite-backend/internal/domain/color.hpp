@@ -10,6 +10,9 @@
 
 namespace domain {
 
+    struct CRGB;
+    struct CRGBW;
+
     struct CRGB {
         union {
             struct {
@@ -72,6 +75,8 @@ namespace domain {
                 .b = j.at("b")
             };
         }
+
+        static inline CRGBW SubtractWhite(const CRGB &color, const CRGB &white);
     };
 
     struct CRGBW {
@@ -111,6 +116,31 @@ namespace domain {
             };
         }
     };
+
+    inline CRGBW CRGB::SubtractWhite(const domain::CRGB &color, const domain::CRGB &white) {
+        double min_pct_white = 1.0;
+        for (int i = 0; i < 3; i++) {
+            const auto c_color = color.raw[i];
+            const auto c_white = white.raw[i];
+            if (c_color >= c_white) {
+                continue;
+            }
+            const auto pct_white = c_white / (double) c_color;
+            min_pct_white = std::min(min_pct_white, pct_white);
+        }
+        const CRGB subtract{
+            .r = (uint8_t) std::max(std::min(std::floor(white.r * min_pct_white), 255.0), 0.0),
+            .g = (uint8_t) std::max(std::min(std::floor(white.g * min_pct_white), 255.0), 0.0),
+            .b = (uint8_t) std::max(std::min(std::floor(white.b * min_pct_white), 255.0), 0.0),
+        };
+        const auto white_value = (uint8_t) (255.0 * min_pct_white);
+        return CRGBW{
+            .r = (uint8_t) std::min(std::max(color.r - subtract.r, 0), 255),
+            .g = (uint8_t) std::min(std::max(color.g - subtract.g, 0), 255),
+            .b = (uint8_t) std::min(std::max(color.b - subtract.b, 0), 255),
+            .w = white_value
+        };
+    }
 }
 
 #endif //DOMAIN_COLOR_HPP

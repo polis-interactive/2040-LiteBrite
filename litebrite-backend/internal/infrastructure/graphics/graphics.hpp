@@ -32,8 +32,8 @@ namespace infrastructure {
             _size(buffer_size),
             _data(std::vector<uint8_t>(buffer_size))
         {}
-        void RenderColor(domain::CRGB c_rgb) const;
-        void RenderColor(domain::CRGBW c_rgbw) const;
+        void RenderColor(const domain::CRGB &c_rgb);
+        void RenderColor(const domain::CRGBW &c_rgbw);
         [[nodiscard]] uint8_t *GetMemory() final {
             return _data.data();
         }
@@ -61,7 +61,7 @@ namespace infrastructure {
         Graphics (const Graphics&) = delete;
         Graphics& operator= (const Graphics&) = delete;
     private:
-        void generateBuffers(const domain::UniverseMap universes, const unsigned int buffer_count);
+        void generateBuffers(const domain::UniverseMap &universes, const unsigned int buffer_count);
         void run(const std::stop_token &st);
         [[nodiscard]] GraphicsBufferPtr getBuffer();
         void render(GraphicsBufferPtr &buffer);
@@ -72,8 +72,8 @@ namespace infrastructure {
         GraphicsManagerPtr _manager;
 
         /* currently, forget about corrections; we need something running */
-        std::optional<domain::CRGB> _white_color;
-        std::optional<domain::CRGB> _color_correction;
+        domain::CRGB _white_color;
+        domain::CRGB _color_correction;
 
         utils::QuickDuration _frame_time;
 
