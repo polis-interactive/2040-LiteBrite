@@ -12,12 +12,14 @@
 #include "utils/clock.hpp"
 
 #include "domain/color.hpp"
+#include "domain/display.hpp"
 #include "domain/installation.hpp"
 
 namespace infrastructure {
 
     struct GraphicsConfig {
-        domain::Installation installation;
+        domain::installation::Layout installation_layout;
+        domain::installation::Config installation_config;
         domain::Display display;
     };
 
@@ -72,10 +74,10 @@ namespace infrastructure {
         GraphicsManagerPtr _manager;
 
         /* currently, forget about corrections; we need something running */
-        domain::CRGB _white_color;
-        domain::CRGB _color_correction;
+        domain::CRGB _white_color = {0};
+        domain::CRGB _color_correction = {0};
 
-        utils::QuickDuration _frame_time;
+        utils::QuickDuration _frame_time = 33ms;
 
         std::mutex _buffer_lock;
         std::queue<GraphicsBuffer *> _buffers;

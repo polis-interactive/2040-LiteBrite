@@ -8,7 +8,6 @@
 #include <iostream>
 
 #include "jwt-cpp/traits/nlohmann-json/traits.h"
-#include "clock.hpp"
 
 using traits = jwt::traits::nlohmann_json;
 using claim = jwt::basic_claim<traits>;

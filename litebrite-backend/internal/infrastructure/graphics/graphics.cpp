@@ -15,10 +15,20 @@ namespace infrastructure {
         _manager(std::move(manager))
     {
 
-        const auto &installation = config.installation;
+        const auto &layout = config.installation_layout;
+        const auto &conf = config.installation_config;
         const auto &display = config.display;
 
-        generateBuffers(installation.universes, display.buffer_count);
+        generateBuffers(layout.universes, display.buffer_count);
+
+        if (conf.rgbw_pixels) {
+            assert(conf.white_color.has_value() || conf.color_temperature.has_value());
+            if (conf.white_color.has_value()) {
+                _white_color = conf.white_color.value();
+            } else {
+                _white_color = domain::CRGB::FromColorTemperature(conf.color_temperature.value());
+            }
+        }
 
         _frame_time = utils::QuickDuration(1.0 / display.fps);
 

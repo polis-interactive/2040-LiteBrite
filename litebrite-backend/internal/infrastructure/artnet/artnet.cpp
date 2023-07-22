@@ -11,12 +11,12 @@ namespace infrastructure {
     }
 
     ArtNet::ArtNet(const infrastructure::ArtNetConfig &config, net::io_context &context) {
-        const auto &installation = config.installation;
-        for (const auto &[host, universes]: installation.controllers) {
+        const auto &layout = config.installation_layout;
+        for (const auto &[host, universes]: layout.controllers) {
             std::map<unsigned int, domain::Universe> controller_universes;
             for (const auto &universe : universes) {
-                auto it = installation.universes.find(universe);
-                if (it != installation.universes.end()) {
+                auto it = layout.universes.find(universe);
+                if (it != layout.universes.end()) {
                     controller_universes[universe] = it->second;
                 }
             }
