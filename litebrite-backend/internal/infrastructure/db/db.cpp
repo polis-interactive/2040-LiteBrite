@@ -10,7 +10,7 @@
 
 namespace infrastructure {
 
-    std::shared_ptr<Db> Db::Create(const DbConfig &conf) {
+    DbPtr Db::Create(const DbConfig &conf) {
         auto db = std::make_shared<Db>(conf);
         if (!db->initialize()) {
             return nullptr;

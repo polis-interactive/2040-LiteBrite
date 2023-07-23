@@ -5,7 +5,7 @@
 
 int main() {
     application::RemoveSuccessFile();
-    auto server = infrastructure::Webserver::Create();
+    auto server = infrastructure::WebServer::Create({});
     server->Start();
     application::WaitForShutdown();
     server->Stop();

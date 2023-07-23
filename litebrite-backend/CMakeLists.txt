@@ -44,6 +44,7 @@ add_definitions(-DJWT_DISABLE_PICOJSON=1)
 include_directories(${third_party_dir})
 
 add_subdirectory(${internal_dir}/infrastructure)
+add_subdirectory(${internal_dir}/service)
 
 if(CMAKE_BUILD_TYPE STREQUAL Debug)
     add_subdirectory(${root_dir}/test)

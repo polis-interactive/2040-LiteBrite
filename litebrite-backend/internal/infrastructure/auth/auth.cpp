@@ -15,7 +15,7 @@ using claim = jwt::basic_claim<traits>;
 
 namespace infrastructure {
 
-    std::shared_ptr<Auth> Auth::Create(const AuthConfig &conf) {
+    AuthPtr Auth::Create(const AuthConfig &conf) {
         auto server = std::make_shared<Auth>(conf);
         if (!server->initialize()) {
             return nullptr;

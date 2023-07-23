@@ -30,7 +30,7 @@ inline void failOut(error_code ec, char const* what) {
 namespace infrastructure {
 
     struct AsioContextConfig {
-        const int pool_size;
+        int pool_size;
     };
 
     class AsioContext;
