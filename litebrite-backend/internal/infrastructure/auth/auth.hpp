@@ -20,10 +20,20 @@
 namespace infrastructure {
 
     struct AuthConfig {
-        std::string pepper;
-        std::string jwt_secret;
-        utils::Duration jwt_expiry;
-        utils::Duration jwt_refresh;
+        std::string auth_pepper;
+        std::string auth_jwt_secret;
+        utils::Duration auth_jwt_expiry;
+        utils::Duration auth_jwt_refresh;
+        static AuthConfig from_source(
+            const nlohmann::json& j, const std::string& pepper, const std::string &jwt_secret
+        ) {
+            AuthConfig conf{};
+            conf.auth_pepper = pepper;
+            conf.auth_jwt_secret = jwt_secret;
+            conf.auth_jwt_expiry = std::chrono::seconds(j.at("auth_jwt_expiry").get<unsigned int>());
+            conf.auth_jwt_refresh = std::chrono::seconds(j.at("auth_jwt_refresh").get<unsigned int>());
+            return conf;
+        }
     };
 
     class Auth;

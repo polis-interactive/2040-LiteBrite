@@ -71,8 +71,10 @@ namespace domain {
 
         struct Config {
 
+            unsigned int buffer_count = 1;
+
             /* these should really be at the universe level / pixel level but w.e */
-            bool rgbw_pixels;
+            bool rgbw_pixels = false;
             // only relevant to rgbw pixels
             std::optional<unsigned int> color_temperature;
             std::optional<CRGB> white_color;
@@ -83,6 +85,7 @@ namespace domain {
 
             [[nodiscard]] nlohmann::json to_json() const {
                 nlohmann::json j;
+                j["buffer_count"] = buffer_count;
                 j["rgbw_pixels"] = rgbw_pixels;
                 if (color_temperature.has_value()) {
                     j["color_temperature"] = color_temperature.value();
@@ -101,6 +104,7 @@ namespace domain {
 
             static Config from_json(const nlohmann::json& j) {
                 Config c;
+                c.buffer_count = j.at("buffer_count").get<unsigned int>();
                 c.rgbw_pixels = j.at("rgbw_pixels").get<bool>();
                 if (j.contains("color_temperature")) {
                     c.color_temperature = { j.at("color_temperature").get<unsigned int>() };

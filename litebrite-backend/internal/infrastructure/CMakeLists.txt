@@ -5,4 +5,4 @@ add_subdirectory(graphics)
 add_subdirectory(udp)
 add_subdirectory(webserver)
 
-add_subdirectory(artnet)
+add_subdirectory(art_net)

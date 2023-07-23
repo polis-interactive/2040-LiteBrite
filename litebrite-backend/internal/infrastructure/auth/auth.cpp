@@ -24,8 +24,8 @@ namespace infrastructure {
     }
 
     Auth::Auth(const infrastructure::AuthConfig &conf):
-        _pepper(conf.pepper), _jwt_secret(conf.jwt_secret), _jwt_refresh(conf.jwt_refresh),
-        _jwt_expiry(conf.jwt_expiry)
+        _pepper(conf.auth_pepper), _jwt_secret(conf.auth_jwt_secret), _jwt_refresh(conf.auth_jwt_refresh),
+        _jwt_expiry(conf.auth_jwt_expiry)
     {}
 
     bool Auth::initialize() {

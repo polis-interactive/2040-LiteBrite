@@ -12,7 +12,7 @@
 
 #include "domain/installation.hpp"
 
-#include "infrastructure/artnet/artnet.hpp"
+#include "infrastructure/art_net/art_net.hpp"
 
 #include "../test_asio_utils.hpp"
 
@@ -36,7 +36,7 @@
     auto layout = domain::installation::Layout::from_json(installation_json);
     return {
         .installation_layout = layout,
-        .artnet_buffer_count = 3
+        .art_net_buffer_count = 3
     };
 }
 

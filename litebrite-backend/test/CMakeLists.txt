@@ -15,7 +15,7 @@ set(
         test_infrastructure/test_artnet/test_artnet_controller.cpp
 )
 
-set(tests_link_libraries pthread auth db udp artnet)
+set(tests_link_libraries pthread auth db udp art_net)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ggdb -O0")
 add_definitions(-DTEST_DIR="${CMAKE_CURRENT_SOURCE_DIR}")

@@ -1,0 +1,24 @@
+{
+  "art_net_buffer_count": 3,
+  "asio_pool_size": 2,
+  "default_display": {
+    "fps": 30.0,
+    "type": "RGBW",
+    "rgbw_color": {
+      "r": 255, "g": 127, "b": 0, "w": 127
+    }
+  },
+  "installation_config": {
+    "buffer_count": 3,
+    "rgbw_pixels": true,
+    "color_temperature": 3000
+  },
+  "installation_layout": {
+    "universes": {
+      "0": { "pixel_count": 9, "pixel_width": 4, "start_index": 0 }
+    },
+    "controllers": {
+      "69.4.20.6": [0]
+    }
+  }
+}

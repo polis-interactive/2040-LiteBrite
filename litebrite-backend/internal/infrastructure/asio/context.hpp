@@ -11,6 +11,8 @@
 #include <thread>
 #include <iostream>
 
+#include <nlohmann/json.hpp>
+
 namespace net = boost::asio;
 using boost::asio::ip::udp;
 using boost::asio::ip::tcp;
@@ -30,7 +32,12 @@ inline void failOut(error_code ec, char const* what) {
 namespace infrastructure {
 
     struct AsioContextConfig {
-        int pool_size;
+        int asio_pool_size;
+        static AsioContextConfig from_json(const nlohmann::json& j) {
+            AsioContextConfig conf{};
+            conf.asio_pool_size = j.at("asio_pool_size").get<int>();
+            return conf;
+        }
     };
 
     class AsioContext;
@@ -44,9 +51,9 @@ namespace infrastructure {
         }
 
         explicit AsioContext(const AsioContextConfig &config) :
-                _context(config.pool_size),
+                _context(config.asio_pool_size),
                 _guard(net::make_work_guard(_context)),
-                _pool(std::vector<std::jthread>(config.pool_size))
+                _pool(std::vector<std::jthread>(config.asio_pool_size))
         {}
 
         void Start() noexcept {
