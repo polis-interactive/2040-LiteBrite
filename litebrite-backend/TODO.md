@@ -1,0 +1,2 @@
+- I should really turn off the lights before the application closes out
+- Need to check if color correction actually works; can test with frontend

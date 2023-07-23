@@ -70,9 +70,9 @@ namespace domain {
 
         static CRGB from_json(const nlohmann::json& j) {
             return {
-                .r = j.at("r"),
-                .g = j.at("g"),
-                .b = j.at("b")
+                .r = j.at("r").get<uint8_t>(),
+                .g = j.at("g").get<uint8_t>(),
+                .b = j.at("b").get<uint8_t>()
             };
         }
 
@@ -109,10 +109,10 @@ namespace domain {
 
         static CRGBW from_json(const nlohmann::json& j) {
             return {
-                .r = j.at("r"),
-                .g = j.at("g"),
-                .b = j.at("b"),
-                .w = j.at('w')
+                .r = j.at("r").get<uint8_t>(),
+                .g = j.at("g").get<uint8_t>(),
+                .b = j.at("b").get<uint8_t>(),
+                .w = j.at("w").get<uint8_t>()
             };
         }
     };

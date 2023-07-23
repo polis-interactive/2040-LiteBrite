@@ -2,6 +2,8 @@
 // Created by broosegoose on 7/22/23.
 //
 
+#include <iostream>
+
 #include "graphics.hpp"
 
 namespace infrastructure {
@@ -150,7 +152,7 @@ namespace infrastructure {
     }
     void GraphicsBuffer::RenderColor(const domain::CRGBW &c_rgbw) {
         // Fill the first 4 bytes.
-        std::memcpy((void *) _data.data(), c_rgbw.raw, 3);
+        std::memcpy((void *) _data.data(), c_rgbw.raw, 4);
 
         // Now copy in doubling sizes.
         size_t bytes_filled = 4;
