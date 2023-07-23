@@ -14,12 +14,23 @@
 
 namespace infrastructure {
 
-    class Webserver: public std::enable_shared_from_this<Webserver> {
+    struct WebServerConfig {
+
+    };
+
+    class WebServer;
+    typedef std::shared_ptr<WebServer> WebServerPtr;
+
+    class WebServer: public std::enable_shared_from_this<WebServer> {
     public:
-        static std::shared_ptr<Webserver> Create();
-        Webserver() = default;
+        [[nodiscard]] static WebServerPtr Create(const WebServerConfig &config);
+        explicit WebServer(const WebServerConfig &conf);
         void Start();
         void Stop();
+        // no copy assignment, no empty assignment
+        WebServer() = delete;
+        WebServer (const WebServer&) = delete;
+        WebServer& operator= (const WebServer&) = delete;
     private:
         void initialize();
         void run();

@@ -8,6 +8,8 @@
 #include <thread>
 #include <queue>
 
+#include <nlohmann/json.hpp>
+
 #include "utils/buffers.hpp"
 #include "utils/clock.hpp"
 
@@ -18,9 +20,16 @@
 namespace infrastructure {
 
     struct GraphicsConfig {
-        domain::installation::Layout installation_layout;
+        domain::Display default_display;
         domain::installation::Config installation_config;
-        domain::Display display;
+        domain::installation::Layout installation_layout;
+        static GraphicsConfig from_json(const nlohmann::json& j) {
+            GraphicsConfig conf{};
+            conf.installation_config = domain::installation::Config::from_json(j.at("installation_config"));
+            conf.installation_layout = domain::installation::Layout::from_json(j.at("installation_layout"));
+            conf.default_display = domain::Display::from_json(j.at("default_display"));
+            return conf;
+        }
     };
 
     struct GraphicsManager {

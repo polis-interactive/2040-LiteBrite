@@ -20,15 +20,28 @@
 namespace infrastructure {
 
     struct AuthConfig {
-        const std::string pepper;
-        const std::string jwt_secret;
-        const utils::Duration jwt_expiry;
-        const utils::Duration jwt_refresh;
+        std::string auth_pepper;
+        std::string auth_jwt_secret;
+        utils::Duration auth_jwt_expiry;
+        utils::Duration auth_jwt_refresh;
+        static AuthConfig from_source(
+            const nlohmann::json& j, const std::string& pepper, const std::string &jwt_secret
+        ) {
+            AuthConfig conf{};
+            conf.auth_pepper = pepper;
+            conf.auth_jwt_secret = jwt_secret;
+            conf.auth_jwt_expiry = std::chrono::seconds(j.at("auth_jwt_expiry").get<unsigned int>());
+            conf.auth_jwt_refresh = std::chrono::seconds(j.at("auth_jwt_refresh").get<unsigned int>());
+            return conf;
+        }
     };
+
+    class Auth;
+    typedef std::shared_ptr<Auth> AuthPtr;
 
     class Auth {
     public:
-        static std::shared_ptr<Auth> Create(const AuthConfig &conf);
+        [[nodiscard]] static AuthPtr Create(const AuthConfig &conf);
         explicit Auth(const AuthConfig &conf);
 
         /* hashes a users password, creates a salt to store in db */

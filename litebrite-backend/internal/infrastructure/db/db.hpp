@@ -22,15 +22,18 @@ namespace infrastructure {
     typedef std::unique_ptr<SQLite::Database> DatabasePtr;
 
     struct DbConfig {
-        const std::filesystem::path db_path;
-        const std::string db_name;
-        const bool clear_db;
-        const bool seed_db;
+        std::filesystem::path db_path;
+        std::string db_name;
+        bool clear_db;
+        bool seed_db;
     };
+
+    class Db;
+    typedef std::shared_ptr<Db> DbPtr;
 
     class Db: std::enable_shared_from_this<Db> {
     public:
-        static std::shared_ptr<Db> Create(const DbConfig &conf);
+        [[nodiscard]] static DbPtr Create(const DbConfig &conf);
         explicit Db(const DbConfig &conf);
 
         // public for test; and I'm not fancy enough to protect friend it with some test class...

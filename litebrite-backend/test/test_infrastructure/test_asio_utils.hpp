@@ -15,7 +15,7 @@
     return std::move(
         infrastructure::AsioContext::Create(
             infrastructure::AsioContextConfig{
-                .pool_size = pool_size.has_value() ? pool_size.value() : 1
+                .asio_pool_size = pool_size.has_value() ? pool_size.value() : 1
             }
         )
     );
