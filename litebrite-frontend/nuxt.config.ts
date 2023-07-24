@@ -5,6 +5,7 @@ import { aliases, fa } from 'vuetify/iconsets/fa'
 export default defineNuxtConfig({
   modules: [
     '@invictus.codes/nuxt-vuetify',
+    '@pinia/nuxt'
   ],
   css: [
     '@fortawesome/fontawesome-svg-core/styles.css'
