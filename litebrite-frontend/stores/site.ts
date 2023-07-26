@@ -1,4 +1,4 @@
-import { Site } from '~/lib/domain/sites'
+import { Site, AvaliableHosts } from '~/lib/domain/sites'
 import { defineStore } from 'pinia'
 
 export const useSiteStore = defineStore('site', {
@@ -11,5 +11,8 @@ export const useSiteStore = defineStore('site', {
     setSite(site: Site) {
       Object.assign(this, site);
     }
+  },
+  getters: {
+    hasNoSite: (state) => !AvaliableHosts.find((site) => site.id === state.id)
   }
 })
