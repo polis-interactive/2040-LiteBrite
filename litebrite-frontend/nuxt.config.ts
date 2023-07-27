@@ -13,6 +13,14 @@ export default defineNuxtConfig({
   imports: {
     dirs: ['lib']
   },
+  typescript: {
+    tsConfig: {
+      typeRoots: [
+        "./node_modules/@types",
+        "./node_modules/vuetify/lib/types"
+      ]
+    }
+  },
   ssr: true,
   nitro: {
     compressPublicAssets: {

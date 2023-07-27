@@ -13,7 +13,8 @@
     "@nuxt/devtools": "latest",
     "@types/node": "^18.16.19",
     "nuxt": "^3.6.2",
-    "typescript": "^5.1.6"
+    "typescript": "^5.1.6",
+    "vuetify": "^3.3.10"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.4.0",
