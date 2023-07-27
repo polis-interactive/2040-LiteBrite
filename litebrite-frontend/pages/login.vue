@@ -1,4 +1,5 @@
 <script setup lang="ts">
+
 import { useSiteStore } from '~/stores/site';
 import { Site, AvaliableHosts } from '~/lib/domain/sites'
 import type { VForm } from 'vuetify/components/index'
@@ -6,6 +7,10 @@ import type { VForm } from 'vuetify/components/index'
 const store = useSiteStore();
 
 const loading = ref(false);
+
+const validationState = ref(null);
+const serverIssue = ref(false);
+const invalidLogin = ref(false);
 
 const email = ref("");
 
@@ -26,6 +31,12 @@ const password = ref("");
 
 const passwordRules = [
   (value: string) => {
+    if (serverIssue.value) {
+      return "Server issue; please contact bruce...";
+    }
+    if (invalidLogin.value) {
+      return `Invalid Login for ${store.$state.name}`;
+    }
     if (value === '') {
       return 'Please enter a password';
     }
@@ -47,19 +58,36 @@ function handleSiteSelection(site: Site) {
 }
 
 function clearValidation() {
-  if (loginForm.value) {
-    loginForm.value.resetValidation();
-  }
+  loginForm.value?.resetValidation();
+  invalidLogin.value = false;
+  serverIssue.value = false;
 }
 
 async function tryLogin(): Promise<void> {
   loading.value = true;
-  return new Promise((resolve) => {
-    setTimeout(() => { 
-      loading.value = false;
-      resolve();
-    }, 3000)
+  const { valid } = await loginForm.value?.validate() ?? { valid: false };
+  if (!valid) {
+    loading.value = false;
+    return;
+  }
+  await useBaseUrlFetch('/api/login', {
+    method: 'post',
+    body: {
+      email: email.value, password: password.value
+    },
+    onRequestError() {
+      serverIssue.value = true;
+      loginForm.value?.validate();
+    },
+    onResponseError() {
+      invalidLogin.value = true;
+      loginForm.value?.validate();
+    },
+    onResponse() {
+      navigateTo('/');
+    }
   });
+  loading.value = false;
 }
 
 definePageMeta({
@@ -105,10 +133,10 @@ definePageMeta({
         </template>
         <template v-else>
           <v-form 
+            v-model:model-value="validationState"
             :disabled="loading"
             ref="loginForm"
             validate-on="submit lazy"
-            @submit.prevent="tryLogin"
           >
             <v-text-field 
               v-model="email"
@@ -131,9 +159,9 @@ definePageMeta({
             <v-btn
               :loading="loading"
               variant="outlined"
-              type="submit"
               class="mt-2"
               text="Submit"
+              @click="tryLogin"
             ></v-btn>
           </v-form>
         </template>

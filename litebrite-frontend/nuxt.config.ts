@@ -21,6 +21,11 @@ export default defineNuxtConfig({
       ]
     }
   },
+  runtimeConfig: {
+    public: {
+      baseURL: process.env.NODE_ENV === "development" ? "http://localhost:6969/" : ""
+    }
+  },
   ssr: true,
   nitro: {
     compressPublicAssets: {
