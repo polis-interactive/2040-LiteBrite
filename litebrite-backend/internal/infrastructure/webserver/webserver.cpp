@@ -6,18 +6,27 @@
 
 namespace infrastructure {
 
-    WebServerPtr WebServer::Create(const WebServerConfig &conf) {
-        auto server = std::make_shared<WebServer>(conf);
+    WebServerPtr WebServer::Create(const WebServerConfig &conf, WebServerManagerPtr manager) {
+        auto server = std::make_shared<WebServer>(conf, std::move(manager));
         server->initialize();
         return std::move(server);
     }
 
-    WebServer::WebServer(const WebServerConfig &conf) {}
+    WebServer::WebServer(const WebServerConfig &conf, WebServerManagerPtr manager):
+        _port(conf.web_server_port),
+        _threads(conf.web_server_threads),
+        _manager(std::move(manager)),
+        _jwt_expiry(conf.auth_jwt_expiry)
+    {}
 
     void WebServer::initialize() {
         std::cout << "infrastructure::Server(): initializing server" << std::endl;
-        _app = std::make_unique<crow::SimpleApp>();
+        _app = std::make_unique<CrowApp>();
         _app->signal_clear();
+        CROW_ROUTE((*_app), "/api/login")
+            .methods("POST"_method)
+            (std::bind_front(&WebServer::handleLogin, shared_from_this()))
+        ;
         CROW_ROUTE((*_app), "/")([]() {
             return "fk the world";
         });
@@ -60,9 +69,8 @@ namespace infrastructure {
     void WebServer::run() {
         std::cout << "infrastructure::Server::run(): running on port 8080 async" << std::endl;
         _app->
-            port(8080)
-            .use_compression(crow::compression::algorithm::GZIP)
-            .concurrency(4)
+            port(_port)
+            .concurrency(_threads)
             .run();
         std::cout << "infrastructure::Server::run(): server stopped" << std::endl;
     }

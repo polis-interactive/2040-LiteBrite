@@ -1,6 +1,11 @@
 {
   "art_net_buffer_count": 3,
   "asio_pool_size": 2,
+  "auth_jwt_expiry": 1800,
+  "auth_jwt_refresh": 1200,
+  "db_name": "lighting.db",
+  "db_clear": false,
+  "db_seed": true,
   "default_display": {
     "fps": 30.0,
     "type": "RGBW",
@@ -20,5 +25,7 @@
     "controllers": {
       "69.4.20.6": [0]
     }
-  }
+  },
+  "web_server_port": 8080,
+  "web_server_threads": 4
 }

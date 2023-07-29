@@ -15,7 +15,7 @@ namespace infrastructure {
                 {
                     "id": 0,
                     "name": "Admin",
-                    "subdomain": "*"
+                    "subdomain": ""
                 },
                 {
                     "id": 1,
@@ -27,19 +27,19 @@ namespace infrastructure {
                 {
                     "id": 0,
                     "email": "bruce@polis.tv",
-                    "password": "broosegoose",
+                    "name": "Broose Goose",
+                    "password": "",
                     "salt": "",
-                    "needs_password_change": true,
                     "is_admin": true,
                     "site_id": 0
                 },
                 {
                     "id": 1,
                     "email": "nate.hardesty@thompsonhotels.com",
-                    "password": "thompson",
+                    "name": "Nate Hardesty",
+                    "password": "",
                     "salt": "",
-                    "needs_password_change": true,
-                    "is_admin": true,
+                    "is_admin": false,
                     "site_id": 1
                 }
             ]
@@ -51,7 +51,7 @@ namespace infrastructure {
         return (int32_t) hasher(seed);
     }
 
-    void Db::insertSeedData(const nlohmann::json &data) {
+    void Db::insertSeedData(const nlohmann::json &data, const DbConfig &conf) {
         for (const auto& site : data["sites"]) {
             const auto domain_site = domain::Site::from_json(site);
             const auto ret = CreateSite(domain_site);
@@ -62,7 +62,11 @@ namespace infrastructure {
         const auto sites = GetAllSites();
         for (const auto& user : data["users"]) {
             auto domain_user = domain::User::from_json(user);
-            domain_user.site_id = sites.at(domain_user.site_id).id;
+            if (domain_user.name == "Broose Goose") {
+                domain_user.password = conf.broose_password;
+            } else if (domain_user.name == "Nate Hardesty") {
+                domain_user.password = conf.thompson_password;
+            }
             const auto ret = CreateUser(domain_user);
             if (!ret) {
                 throw std::runtime_error("Failed to insert user");

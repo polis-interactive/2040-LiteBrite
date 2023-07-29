@@ -60,7 +60,7 @@ namespace infrastructure {
     }
 
     std::pair<bool, std::string> Auth::VerifyLogin(const domain::User &login, const domain::User &store) {
-        if (!login.is_admin && login.site_id != store.site_id) {
+        if (!store.is_admin && login.site_id != store.site_id) {
             return { false, "No Access" };
         }
         const auto login_password = login.password + store.salt + _pepper;
@@ -84,8 +84,10 @@ namespace infrastructure {
                 .set_issued_at(now)
                 .set_not_before(now)
                 .set_expires_at(now + _jwt_expiry)
-                .set_payload_claim("user_id", user.id)
-                .set_payload_claim("admin", user.is_admin)
+                .set_payload_claim("id", user.id)
+                .set_payload_claim("email", user.email)
+                .set_payload_claim("name", user.name)
+                .set_payload_claim("is_admin", user.is_admin)
                 .set_payload_claim("site_id", user.site_id)
                 .sign(jwt::algorithm::hs256{_jwt_secret});
 
@@ -119,8 +121,10 @@ namespace infrastructure {
 
             // get the user back
             auto user = std::make_unique<domain::User>();
-            user->id = decoded_token.get_payload_claim("user_id").as_integer();
-            user->is_admin = decoded_token.get_payload_claim("admin").as_boolean();
+            user->id = decoded_token.get_payload_claim("id").as_integer();
+            user->email = decoded_token.get_payload_claim("email").as_string();
+            user->name = decoded_token.get_payload_claim("name").as_string();
+            user->is_admin = decoded_token.get_payload_claim("is_admin").as_boolean();
             user->site_id = decoded_token.get_payload_claim("site_id").as_integer();
 
             // Check if token is about to expire / has expired

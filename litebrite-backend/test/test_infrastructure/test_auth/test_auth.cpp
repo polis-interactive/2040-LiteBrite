@@ -18,11 +18,10 @@
     std::optional<utils::Duration> refresh
 ) {
     return {
-        .pepper = "TEST_PEPPER",
-        .jwt_secret = "TEST_SECRET",
-        .jwt_expiry = expiry.has_value() ? expiry.value() : 30min,
-        .jwt_refresh = refresh.has_value() ? refresh.value() : 5min
-
+        .auth_pepper = "TEST_PEPPER",
+        .auth_jwt_secret = "TEST_SECRET",
+        .auth_jwt_expiry = expiry.has_value() ? expiry.value() : 30min,
+        .auth_jwt_refresh = refresh.has_value() ? refresh.value() : 5min
     };
 }
 
@@ -60,6 +59,7 @@ TEST_CASE("Infrastructure_Auth-PasswordRetrieval") {
     auto db_user = domain::User {
             .id = 1,
             .email = "bruce@polis.tv",
+            .name = "broose",
             .password = "test-password"
     };
     auto login_user = db_user;
@@ -70,6 +70,7 @@ TEST_CASE("Infrastructure_Auth-PasswordRetrieval") {
     auto ret = auth->VerifyLogin(login_user, db_user);
     // make sure we succeeded
     REQUIRE(ret.first);
+    std::cout << ret.second << std::endl;
     // should check that we returned a valid jwt; but for now we don't do that
 
     login_user.password = "some-different-password";
@@ -85,6 +86,7 @@ TEST_CASE("Infrastructure_Auth-JwtStore") {
     auto db_user = domain::User {
             .id = 70,
             .email = "bruce@polis.tv",
+            .name = "broose",
             .password = "test-password",
             .is_admin = true,
             .site_id = 33
@@ -120,6 +122,7 @@ TEST_CASE("Infrastructure_Auth-JwtStoreRefresh") {
     auto db_user = domain::User {
             .id = 70,
             .email = "bruce@polis.tv",
+            .name = "broose",
             .password = "test-password",
             .is_admin = true,
             .site_id = 33
@@ -149,6 +152,7 @@ TEST_CASE("Infrastructure_Auth-JwtExpiry") {
     auto db_user = domain::User {
             .id = 70,
             .email = "bruce@polis.tv",
+            .name = "broose",
             .password = "test-password",
             .is_admin = true,
             .site_id = 33
@@ -164,4 +168,20 @@ TEST_CASE("Infrastructure_Auth-JwtExpiry") {
     auto token_ret = auth->ValidateToken(verify_ret.second);
     REQUIRE_FALSE(token_ret.first);
     REQUIRE((bool)(token_ret.second == nullptr));
+}
+
+TEST_CASE("Infrastructure_Auth-GetPepperedPassword") {
+    auto conf = GetAuthTestConfig({}, {});
+    // YOU BETTER NOT COMMIT A FKN PEPPER HERE
+    conf.auth_pepper = "";
+    auto auth = infrastructure::Auth::Create(conf);
+    // YOU BETTER NOT COMMIT A FKN REAL PASSWORD HERE
+    auto user = domain::User {
+        .password = "",
+    };
+    const auto success = auth->HashPassword(user);
+    REQUIRE(success);
+    std::cout << "Password: " << user.password << std::endl;
+    std::cout << "Salt: " << user.salt << std::endl;
+
 }

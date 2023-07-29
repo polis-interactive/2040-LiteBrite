@@ -28,6 +28,11 @@ namespace infrastructure {
             const nlohmann::json& j, const std::string& pepper, const std::string &jwt_secret
         ) {
             AuthConfig conf{};
+            if (pepper.empty()) {
+                throw std::domain_error("AUTH_PEPPER ENV UNSET");
+            } else if (jwt_secret.empty()) {
+                throw std::domain_error("AUTH_JWT_SECRET ENV UNSET");
+            }
             conf.auth_pepper = pepper;
             conf.auth_jwt_secret = jwt_secret;
             conf.auth_jwt_expiry = std::chrono::seconds(j.at("auth_jwt_expiry").get<unsigned int>());

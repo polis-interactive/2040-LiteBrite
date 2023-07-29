@@ -1,5 +1,5 @@
 
-set(SOURCES webserver.cpp)
+set(SOURCES handlers.cpp webserver.cpp)
 set(TARGET_LIBS pthread ${CROW_LINK_LIBRARIES})
 
 add_library(webserver STATIC ${SOURCES})

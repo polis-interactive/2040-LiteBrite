@@ -28,6 +28,7 @@ namespace infrastructure {
                 CREATE TABLE IF NOT EXISTS users (
                     id INTEGER PRIMARY KEY NOT NULL,
                     email TEXT NOT NULL,
+                    name TEXT NOT NULL,
                     password TEXT NOT NULL,
                     salt TEXT NOT NULL,
                     is_admin INTEGER NOT NULL,

@@ -17,17 +17,19 @@ namespace service {
     struct EmbeddedConfig {
         infrastructure::ArtNetConfig art_net_config;
         infrastructure::AsioContextConfig asio_context_config;
-        // infrastructure::AuthConfig auth_config;
-        // infrastructure::DbConfig db_config;
+        infrastructure::AuthConfig auth_config;
+        infrastructure::DbConfig db_config;
         infrastructure::GraphicsConfig graphics_config;
-        // infrastructure::WebServerConfig web_server_config;
+        infrastructure::WebServerConfig web_server_config;
     };
 
     class EmbeddedService;
     typedef std::shared_ptr<EmbeddedService> EmbeddedServicePtr;
 
     class EmbeddedService:
+        public infrastructure::DbManager,
         public infrastructure::GraphicsManager,
+        public infrastructure::WebServerManager,
         public std::enable_shared_from_this<EmbeddedService>
     {
     public:
@@ -38,7 +40,13 @@ namespace service {
         void Unset();
 
         /* Manager Members */
-        void PostGraphicsUpdate(utils::SizedBufferPtr &&pixels);
+        // db
+        bool HashPassword(domain::User &user) final;
+        // graphics
+        void PostGraphicsUpdate(utils::SizedBufferPtr &&pixels) final;
+        // webserver
+        std::pair<bool, std::string> TryLogin(const domain::User &user) final;
+
 
         // no copy assignment
         EmbeddedService (const EmbeddedService&) = delete;
@@ -51,7 +59,7 @@ namespace service {
         infrastructure::AuthPtr _auth;
         infrastructure::DbPtr _db;
         infrastructure::GraphicsPtr _graphics;
-        infrastructure::WebServerPtr _webserver;
+        infrastructure::WebServerPtr _web_server;
     };
 }
 

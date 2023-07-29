@@ -14,10 +14,11 @@ namespace domain {
 
         int id;
         std::string email;
+        std::string name;
         /* salted and peppered password */
         std::string password;
         std::string salt;
-        bool needs_password_change = true;
+        /* getting rid of needsPassword change for now; going to make them a secret on comp */
         bool is_admin = false;
         int site_id = -1;
 
@@ -25,22 +26,23 @@ namespace domain {
             nlohmann::json j;
             j["id"] = id;
             j["email"] = email;
+            j["name"] = name;
             j["password"] = password;
             j["salt"] = salt;
-            j["needs_password_change"] = needs_password_change;
             j["is_admin"] = is_admin;
             j["site_id"] = site_id;
             return j;
         }
 
         static User from_json(const nlohmann::json& j) {
+            /* allow creation of user with just email / password / site_id */
             return {
                 .id = j.value("id", -1),
                 .email = j.at("email"),
+                .name = j.value("name", ""),
                 .password = j.at("password"),
-                .salt = j.at("salt"),
-                .needs_password_change = j.at("needs_password_change"),
-                .is_admin = j.at("is_admin"),
+                .salt = j.value("salt", ""),
+                .is_admin = j.value("is_admin", false),
                 .site_id = j.at("site_id"),
             };
         }
