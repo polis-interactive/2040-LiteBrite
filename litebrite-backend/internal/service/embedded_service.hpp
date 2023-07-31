@@ -44,8 +44,6 @@ namespace service {
         bool HashPassword(domain::User &user) final;
         // graphics
         void PostGraphicsUpdate(utils::SizedBufferPtr &&pixels) final;
-        // webserver
-        std::pair<bool, std::string> TryLogin(const domain::User &user) final;
 
 
         // no copy assignment

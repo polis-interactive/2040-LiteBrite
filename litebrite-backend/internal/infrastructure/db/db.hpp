@@ -57,7 +57,7 @@ namespace infrastructure {
     };
     typedef std::shared_ptr<DbManager> DbManagerPtr;
 
-    class Db: std::enable_shared_from_this<Db> {
+    class Db: public std::enable_shared_from_this<Db> {
     public:
         [[nodiscard]] static DbPtr Create(const DbConfig &conf, DbManagerPtr manager);
         explicit Db(const DbConfig &conf, DbManagerPtr manager);

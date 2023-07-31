@@ -45,4 +45,23 @@ namespace infrastructure {
         return nullptr;
     }
 
+    std::unique_ptr<domain::User> Db::GetUser(const int user_id) {
+        SQLite::Statement query(*_db, "SELECT * FROM users WHERE id = ?");
+        query.bind(1, user_id);
+
+        if (query.executeStep()) {
+            auto user = std::make_unique<domain::User>();
+            user->id = query.getColumn("id");
+            user->email = query.getColumn("email").getString();
+            user->name = query.getColumn("name").getString();
+            user->password = query.getColumn("password").getString();
+            user->salt = query.getColumn("salt").getString();
+            user->is_admin = query.getColumn("is_admin").getInt() != 0;
+            user->site_id = query.getColumn("site_id");
+            return user;
+        }
+
+        return nullptr;
+    }
+
 }

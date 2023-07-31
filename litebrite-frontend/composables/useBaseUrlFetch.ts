@@ -4,9 +4,13 @@ export const useBaseUrlFetch: typeof useFetch = (request, opts?) => {
     if (!!config.public.baseURL) {
         return useFetch(request, { 
             baseURL: config.public.baseURL,
+            credentials: 'include',
             ...opts 
         })
     } else {
-        return useFetch(request, opts)
+        return useFetch(request, {
+            credentials: 'include',
+            ...opts
+        })
     }
   }

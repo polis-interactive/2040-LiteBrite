@@ -23,7 +23,7 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {
     public: {
-      baseURL: process.env.NODE_ENV === "development" ? "http://localhost:6969/" : ""
+      baseURL: process.env.NODE_ENV === "development" ? "http://localhost:8080/" : ""
     }
   },
   ssr: true,
@@ -31,6 +31,11 @@ export default defineNuxtConfig({
     compressPublicAssets: {
       gzip: true,
       brotli: false
+    },
+    prerender: {
+      failOnError: false,
+      crawlLinks: false,
+      routes: ['/', '/login']
     }
   },
   vuetify: {
@@ -55,5 +60,5 @@ export default defineNuxtConfig({
       useVuetifyLabs: false,
     }
   },
-  devtools: { enabled: true }
+  devtools: { enabled: true },
 })

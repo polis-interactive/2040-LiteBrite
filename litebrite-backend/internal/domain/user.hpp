@@ -23,12 +23,11 @@ namespace domain {
         int site_id = -1;
 
         [[nodiscard]] nlohmann::json to_json() const {
+            /* don't include any sensitive fields */
             nlohmann::json j;
             j["id"] = id;
             j["email"] = email;
             j["name"] = name;
-            j["password"] = password;
-            j["salt"] = salt;
             j["is_admin"] = is_admin;
             j["site_id"] = site_id;
             return j;

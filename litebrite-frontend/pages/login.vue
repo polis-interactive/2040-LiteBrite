@@ -1,10 +1,13 @@
 <script setup lang="ts">
 
 import { useSiteStore } from '~/stores/site';
+import { useUserStore } from '~/stores/user';
 import { Site, AvaliableHosts } from '~/lib/domain/sites'
+import { TryGetUserFromObject } from '~/lib/domain/user';
 import type { VForm } from 'vuetify/components/index'
 
-const store = useSiteStore();
+const siteStore = useSiteStore();
+const userStore = useUserStore();
 
 const loading = ref(false);
 
@@ -35,7 +38,7 @@ const passwordRules = [
       return "Server issue; please contact bruce...";
     }
     if (invalidLogin.value) {
-      return `Invalid Login for ${store.$state.name}`;
+      return `Invalid Login for ${siteStore.$state.name}`;
     }
     if (value === '') {
       return 'Please enter a password';
@@ -47,7 +50,7 @@ const passwordRules = [
 const loginForm: Ref<VForm | null> = ref(null);
 
 const subtitle = computed(() => {
-  return store.hasNoSite ? 'Select Domain' : `${store.$state.name} Login`
+  return siteStore.hasNoSite ? 'Select Domain' : `${siteStore.$state.name} Login`
 })
 
 function handleSiteSelection(site: Site) {
@@ -70,10 +73,10 @@ async function tryLogin(): Promise<void> {
     loading.value = false;
     return;
   }
-  await useBaseUrlFetch('/api/login', {
+  const { data, error } = await useBaseUrlFetch('/api/auth/login', {
     method: 'post',
     body: {
-      email: email.value, password: password.value
+      email: email.value, password: password.value, site_id: siteStore.$state.id
     },
     onRequestError() {
       serverIssue.value = true;
@@ -82,11 +85,17 @@ async function tryLogin(): Promise<void> {
     onResponseError() {
       invalidLogin.value = true;
       loginForm.value?.validate();
-    },
-    onResponse() {
-      navigateTo('/');
     }
   });
+  if (!error.value && data.value) {
+    const user = TryGetUserFromObject(data.value);
+    if (user === null) {
+      serverIssue.value = true;
+    } else {
+      userStore.setUser(user);
+      navigateTo("/");
+    }
+  }
   loading.value = false;
 }
 
@@ -112,7 +121,7 @@ definePageMeta({
         class="login__title mb-2"
       />
       <v-card-text class="login__body">
-        <template v-if="store.hasNoSite">
+        <template v-if="siteStore.hasNoSite">
           <v-list 
             color="secondary"
             nav

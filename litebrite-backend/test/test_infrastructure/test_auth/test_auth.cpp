@@ -97,22 +97,21 @@ TEST_CASE("Infrastructure_Auth-JwtStore") {
     auto token = verify_ret.second;
 
     // make sure we get the user back out from the jwt
-    auto token_ret = auth->ValidateToken(token);
+    auto [validate_success, new_token, validate_user_id] = auth->ValidateToken(token);
     // make sure it worked
-    REQUIRE(token_ret.first);
-    REQUIRE((bool)(token_ret.second != nullptr));
-    auto out_user = std::move(token_ret.second);
+    REQUIRE(validate_success);
+    REQUIRE(new_token.empty());
+    REQUIRE_NE(validate_user_id, -1);
     // make sure the user matches
-    REQUIRE_EQ(out_user->id, login_user.id);
-    REQUIRE_EQ(out_user->is_admin, login_user.is_admin);
-    REQUIRE_EQ(out_user->site_id, login_user.site_id);
+    REQUIRE_EQ(validate_user_id, login_user.id);
 
     /* mess up the token; make sure that fails */
     auto messed_up_token = token;
     std::swap(messed_up_token[1], messed_up_token[4]);
-    token_ret = auth->ValidateToken(messed_up_token);
-    REQUIRE_FALSE(token_ret.first);
-    REQUIRE((bool)(token_ret.second == nullptr));
+    auto [should_fail, bad_token, bad_user_id] = auth->ValidateToken(messed_up_token);
+    REQUIRE_FALSE(should_fail);
+    REQUIRE(bad_token.empty());
+    REQUIRE_EQ(bad_user_id, -1);
 }
 
 TEST_CASE("Infrastructure_Auth-JwtStoreRefresh") {
@@ -138,11 +137,11 @@ TEST_CASE("Infrastructure_Auth-JwtStoreRefresh") {
     std::this_thread::sleep_for(1ms);
 
     // make sure we get the user back out from the jwt
-    auto token_ret = auth->ValidateToken(verify_ret.second);
-    REQUIRE(token_ret.first);
-    REQUIRE((bool)(token_ret.second != nullptr));
+    auto [validate_success, refresh_token, validate_user_id] = auth->ValidateToken(verify_ret.second);
+    REQUIRE(validate_success);
+    REQUIRE_NE(validate_user_id, -1);
     // token should have updated
-    REQUIRE_NE(verify_ret.second, old_token);
+    REQUIRE_NE(refresh_token, old_token);
 }
 
 TEST_CASE("Infrastructure_Auth-JwtExpiry") {
@@ -165,9 +164,10 @@ TEST_CASE("Infrastructure_Auth-JwtExpiry") {
     std::this_thread::sleep_for(1ms);
 
     // make sure it failed
-    auto token_ret = auth->ValidateToken(verify_ret.second);
-    REQUIRE_FALSE(token_ret.first);
-    REQUIRE((bool)(token_ret.second == nullptr));
+    auto [should_fail, should_be_empty, should_be_bad_user_id] = auth->ValidateToken(verify_ret.second);
+    REQUIRE_FALSE(should_fail);
+    REQUIRE(should_be_empty.empty());
+    REQUIRE_EQ(should_be_bad_user_id, -1);
 }
 
 TEST_CASE("Infrastructure_Auth-GetPepperedPassword") {

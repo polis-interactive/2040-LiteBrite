@@ -44,7 +44,7 @@ namespace infrastructure {
     class Auth;
     typedef std::shared_ptr<Auth> AuthPtr;
 
-    class Auth {
+    class Auth: public std::enable_shared_from_this<Auth> {
     public:
         [[nodiscard]] static AuthPtr Create(const AuthConfig &conf);
         explicit Auth(const AuthConfig &conf);
@@ -64,7 +64,9 @@ namespace infrastructure {
          *      if it's invalid, SAY SO
          *      return a user if we can
          */
-        [[nodiscard]] std::pair<bool, std::unique_ptr<domain::User>> ValidateToken(std::string &jwt);
+        [[nodiscard]] std::tuple<bool, std::string, int> ValidateToken(const std::string &jwt);
+
+        void RemoveJwt(const std::string &jwt);
 
         // no copy assignment, no empty assignment
         Auth() = delete;

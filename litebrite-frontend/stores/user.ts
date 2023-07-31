@@ -19,5 +19,8 @@ export const useUserStore = defineStore('user', {
         Object.assign(this, user);
       }
     }
+  },
+  getters: {
+    hasNoUser: (state) => state.id === -1
   }
 })

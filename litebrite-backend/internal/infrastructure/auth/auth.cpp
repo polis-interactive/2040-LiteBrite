@@ -76,7 +76,7 @@ namespace infrastructure {
 
     [[nodiscard]] std::string Auth::CreateJwt(const domain::User &user) {
         const auto now = utils::Clock::now();
-        const auto token = jwt::create<traits>()
+        auto token = jwt::create<traits>()
                 .set_type("JWT")
                 .set_issuer("lighting.polis.tv")
                 .set_audience("*.lighting.polis.tv")
@@ -85,10 +85,6 @@ namespace infrastructure {
                 .set_not_before(now)
                 .set_expires_at(now + _jwt_expiry)
                 .set_payload_claim("id", user.id)
-                .set_payload_claim("email", user.email)
-                .set_payload_claim("name", user.name)
-                .set_payload_claim("is_admin", user.is_admin)
-                .set_payload_claim("site_id", user.site_id)
                 .sign(jwt::algorithm::hs256{_jwt_secret});
 
         std::unique_lock lk(_jwt_mutex);
@@ -96,7 +92,7 @@ namespace infrastructure {
         return token;
     }
 
-    std::pair<bool, std::unique_ptr<domain::User>> Auth::ValidateToken(std::string &jwt) {
+    std::tuple<bool, std::string, int> Auth::ValidateToken(const std::string &jwt) {
         /* check if the jwt is known; if not, reject it */
         bool found_jwt = false;
         {
@@ -106,7 +102,7 @@ namespace infrastructure {
             }
         }
         if (!found_jwt) {
-            return { false, nullptr };
+            return { false, "", -1 };
         }
 
         try {
@@ -122,27 +118,28 @@ namespace infrastructure {
             // get the user back
             auto user = std::make_unique<domain::User>();
             user->id = decoded_token.get_payload_claim("id").as_integer();
-            user->email = decoded_token.get_payload_claim("email").as_string();
-            user->name = decoded_token.get_payload_claim("name").as_string();
-            user->is_admin = decoded_token.get_payload_claim("is_admin").as_boolean();
-            user->site_id = decoded_token.get_payload_claim("site_id").as_integer();
 
             // Check if token is about to expire / has expired
             auto now = utils::Clock::now();
             auto expiry = decoded_token.get_expires_at();
             if (expiry - now <= _jwt_refresh) {
-                // refresh the jwt
-                jwt = CreateJwt(*user);
+                RemoveJwt(jwt);
+                // refresh the jwt; delete the old one
+                auto new_jwt = CreateJwt(*user);
+                return {true, new_jwt, user->id};
+            } else {
+                return { true, "", user->id };
             }
-
-            return {true, std::move(user)};
         }
         catch (const jwt::error::token_verification_exception& e) {
-            std::unique_lock lk(_jwt_mutex);
-            _jwt_store.erase(jwt);
-            return {false, nullptr};
+            RemoveJwt(jwt);
+            return { false, "", -1 };
         }
     }
 
+    void Auth::RemoveJwt(const std::string &jwt) {
+        std::unique_lock lk(_jwt_mutex);
+        _jwt_store.erase(jwt);
+    }
 
 }

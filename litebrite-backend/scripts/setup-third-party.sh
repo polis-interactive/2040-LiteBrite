@@ -4,11 +4,14 @@
 $ cd ~/build
 $ git clone https://github.com/CrowCpp/Crow.git
 $ cd Crow/
+# ONLY APPLY PATCH FOR DEBUG MODE!!!!
+$ cp ~/polis/2040-LiteBrite/litebrite-backend/scripts/crow_hack.patch  ./
+$ git apply crow_hack.patch
 $ mkdir build && cd build
 $ cmake .. -DCROW_BUILD_EXAMPLES=OFF -DCROW_BUILD_TESTS=OFF -DASIO_INCLUDE_DIR=/usr/local/lib/boost_1_81_0
 $ make -j6
 $ sudo make install
-# had to also chmod 755 /usr/local/include/crow/middlewares for some reason
+$ sudo chmod 755 /usr/local/include/crow/middlewares
 
 # setup libsodium
 
