@@ -26,21 +26,10 @@ namespace infrastructure {
         std::string db_name;
         bool db_clear;
         bool db_seed;
-        std::string broose_password;
-        std::string thompson_password;
 
         // this is SUPER HACKY, but will work for now. Need to just switch to oauth2 or something
-        static DbConfig from_source(
-            const nlohmann::json& j, const std::string& broose_password, const std::string &thompson_password
-        ) {
+        static DbConfig from_json(const nlohmann::json& j) {
             DbConfig conf{};
-            if (broose_password.empty()) {
-                throw std::domain_error("DB_BROOSE_PASSWORD_RAW ENV UNSET");
-            } else if (thompson_password.empty()) {
-                throw std::domain_error("DB_THOMPSON_PASSWORD_RAW ENV UNSET");
-            }
-            conf.broose_password = broose_password;
-            conf.thompson_password = thompson_password;
             conf.db_path = j.value("db_path", ROOT_DIR),
             conf.db_name = j.at("db_name").get<std::string>();
             conf.db_clear = j.at("db_clear").get<bool>();
@@ -52,9 +41,7 @@ namespace infrastructure {
     class Db;
     typedef std::shared_ptr<Db> DbPtr;
 
-    struct DbManager {
-        virtual bool HashPassword(domain::User &user) = 0;
-    };
+    struct DbManager {};
     typedef std::shared_ptr<DbManager> DbManagerPtr;
 
     class Db: public std::enable_shared_from_this<Db> {
@@ -94,9 +81,9 @@ namespace infrastructure {
         void migrateDb(int32_t current_migration_number);
         static std::vector<std::function<void(DatabasePtr &)>> _migrations;
         void clearDb();
-        void seedDb(int32_t current_seed_hash, const DbConfig &conf);
+        void seedDb(int32_t current_seed_hash);
         nlohmann::json seedData();
-        void insertSeedData(const nlohmann::json &seed, const DbConfig &conf);
+        void insertSeedData(const nlohmann::json &seed);
         const std::filesystem::path _db_path;
         const std::string _db_name;
         DbManagerPtr _manager;

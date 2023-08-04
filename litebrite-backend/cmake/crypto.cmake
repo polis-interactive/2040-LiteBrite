@@ -8,4 +8,4 @@ message("      libsodium include: ${LIBSODIUM_INCLUDE_DIRS}")
 message("      libsodium lib: ${LIBSODIUM_LIBRARIES}")
 
 find_package(OpenSSL REQUIRED)
-set(OpenSSL_LINK_LIBRARIES OpenSSL::Crypto)
+set(OpenSSL_LINK_LIBRARIES ssl crypto)

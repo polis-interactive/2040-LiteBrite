@@ -7,7 +7,6 @@
 
 #include "infrastructure/art_net/art_net.hpp"
 #include "infrastructure/asio/context.hpp"
-#include "infrastructure/auth/auth.hpp"
 #include "infrastructure/db/db.hpp"
 #include "infrastructure/graphics/graphics.hpp"
 #include "infrastructure/webserver/webserver.hpp"
@@ -17,7 +16,6 @@ namespace service {
     struct EmbeddedConfig {
         infrastructure::ArtNetConfig art_net_config;
         infrastructure::AsioContextConfig asio_context_config;
-        infrastructure::AuthConfig auth_config;
         infrastructure::DbConfig db_config;
         infrastructure::GraphicsConfig graphics_config;
         infrastructure::WebServerConfig web_server_config;
@@ -40,8 +38,6 @@ namespace service {
         void Unset();
 
         /* Manager Members */
-        // db
-        bool HashPassword(domain::User &user) final;
         // graphics
         void PostGraphicsUpdate(utils::SizedBufferPtr &&pixels) final;
 
@@ -54,7 +50,6 @@ namespace service {
         std::atomic_bool _is_started = false;
         infrastructure::ArtNetPtr _art_net;
         infrastructure::AsioContextPtr _asio_context;
-        infrastructure::AuthPtr _auth;
         infrastructure::DbPtr _db;
         infrastructure::GraphicsPtr _graphics;
         infrastructure::WebServerPtr _web_server;

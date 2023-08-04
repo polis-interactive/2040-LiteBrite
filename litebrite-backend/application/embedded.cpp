@@ -11,12 +11,7 @@ int main(int argc, char* argv[]) {
     auto service_config = service::EmbeddedConfig{
         .art_net_config = infrastructure::ArtNetConfig::from_json(json_config),
         .asio_context_config = infrastructure::AsioContextConfig::from_json(json_config),
-        .auth_config = infrastructure::AuthConfig::from_source(
-            json_config, env["AUTH_PEPPER"], env["AUTH_JWT_SECRET"]
-        ),
-        .db_config = infrastructure::DbConfig::from_source(
-            json_config, env["DB_BROOSE_PASSWORD_RAW"], env["DB_THOMPSON_PASSWORD_RAW"]
-        ),
+        .db_config = infrastructure::DbConfig::from_json(json_config),
         .graphics_config = infrastructure::GraphicsConfig::from_json(json_config),
         .web_server_config = infrastructure::WebServerConfig::from_json(json_config)
     };

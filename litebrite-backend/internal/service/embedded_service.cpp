@@ -18,14 +18,13 @@ namespace service {
         _asio_context = infrastructure::AsioContext::Create(config.asio_context_config);
         _art_net = infrastructure::ArtNet::Create(config.art_net_config, _asio_context->GetContext());
         _graphics = infrastructure::Graphics::Create(config.graphics_config, shared_from_this());
-        _auth = infrastructure::Auth::Create(config.auth_config);
         _db = infrastructure::Db::Create(config.db_config, shared_from_this());
         if (_db == nullptr) {
             throw std::runtime_error("Unable to startup db");
         }
         // web server goes last as it relies on other services
         _web_server = infrastructure::WebServer::Create(
-            config.web_server_config, _auth, _db, shared_from_this()
+            config.web_server_config, _db, shared_from_this()
         );
     }
 
@@ -56,12 +55,7 @@ namespace service {
         _art_net.reset();
         _asio_context.reset();
         _web_server.reset();
-        _auth.reset();
         _db.reset();
-    }
-
-    bool EmbeddedService::HashPassword(domain::User &user) {
-        return _auth->HashPassword(user);
     }
 
     void EmbeddedService::PostGraphicsUpdate(utils::SizedBufferPtr &&pixels) {

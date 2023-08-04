@@ -29,8 +29,6 @@ namespace infrastructure {
                     id INTEGER PRIMARY KEY NOT NULL,
                     email TEXT NOT NULL,
                     name TEXT NOT NULL,
-                    password TEXT NOT NULL,
-                    salt TEXT NOT NULL,
                     is_admin INTEGER NOT NULL,
                     site_id INTEGER NOT NULL,
                     FOREIGN KEY(site_id) REFERENCES sites(id) ON DELETE CASCADE

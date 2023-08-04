@@ -2,6 +2,16 @@
 
 import { aliases, fa } from 'vuetify/iconsets/fa'
 
+const Auth0DevConfig = {
+  domain: "polis-auth-dev.us.auth0.com",
+  clientId: "5J8Kg0rSQ6PsyBoSZ8KRg2uLEa5sPK4D"
+}
+
+const Auth0ProdConfig = {
+  domain: "polis-auth-dev.us.auth0.com",
+  clientId: "5J8Kg0rSQ6PsyBoSZ8KRg2uLEa5sPK4D"
+}
+
 export default defineNuxtConfig({
   modules: [
     '@invictus.codes/nuxt-vuetify',
@@ -23,7 +33,9 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {
     public: {
-      baseURL: process.env.NODE_ENV === "development" ? "http://localhost:8080/" : ""
+      selfUrl: process.env.NODE_ENV === "development" ? "http://localhost:3000/" : "https://lighting.polis.tv",
+      apiUrl: process.env.NODE_ENV === "development" ? "http://localhost:8080/" : "",
+      auth0Config: process.env.NODE_ENV === "development" ? Auth0DevConfig : Auth0ProdConfig
     }
   },
   ssr: true,

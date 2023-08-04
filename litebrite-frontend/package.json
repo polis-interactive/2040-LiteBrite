@@ -17,6 +17,7 @@
     "vuetify": "^3.3.10"
   },
   "dependencies": {
+    "@auth0/auth0-spa-js": "^2.1.1",
     "@fortawesome/fontawesome-svg-core": "^6.4.0",
     "@fortawesome/free-brands-svg-icons": "^6.4.0",
     "@fortawesome/pro-duotone-svg-icons": "^6.4.0",

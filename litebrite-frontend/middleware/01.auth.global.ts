@@ -13,9 +13,8 @@ export default defineNuxtRouteMiddleware((to, from) => {
   if (!isAuthenticated) {
     userStore.setUser(null);
   }
-  if (!isAuthenticated && to.path !== "/login") {
-    return navigateTo('/login')
-  } else if (isAuthenticated && to.path === "/login") {
-    return navigateTo('/');
+  console.log(isAuthenticated)
+  if (!isAuthenticated && to.path !== "/applications") {
+    return navigateTo('/applications')
   }
 })

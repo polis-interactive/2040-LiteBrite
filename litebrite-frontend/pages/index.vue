@@ -1,10 +1,12 @@
 <script setup lang="ts">
-
+definePageMeta({
+  layout: 'centered'
+})
 </script>
 
 <template>
   <div>
-    Home
+    Checking session
   </div>
 </template>
 

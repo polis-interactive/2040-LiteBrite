@@ -10,15 +10,14 @@
 
 namespace domain {
 
+    struct User;
+    typedef std::unique_ptr<User> UserPtr;
+
     struct User {
 
         int id;
         std::string email;
         std::string name;
-        /* salted and peppered password */
-        std::string password;
-        std::string salt;
-        /* getting rid of needsPassword change for now; going to make them a secret on comp */
         bool is_admin = false;
         int site_id = -1;
 
@@ -39,8 +38,6 @@ namespace domain {
                 .id = j.value("id", -1),
                 .email = j.at("email"),
                 .name = j.value("name", ""),
-                .password = j.at("password"),
-                .salt = j.value("salt", ""),
                 .is_admin = j.value("is_admin", false),
                 .site_id = j.at("site_id"),
             };

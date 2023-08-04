@@ -10,46 +10,51 @@
 namespace infrastructure {
 
     WebServerPtr WebServer::Create(
-        const WebServerConfig &conf, AuthPtr auth, DbPtr db, WebServerManagerPtr manager
+        const WebServerConfig &conf, DbPtr db, WebServerManagerPtr manager
     ) {
-        auto server = std::make_shared<WebServer>(conf, std::move(auth), std::move(db), std::move(manager));
-        server->initialize();
+        auto server = std::make_shared<WebServer>(conf, std::move(db), std::move(manager));
+        server->initialize(conf);
         return std::move(server);
     }
 
     WebServer::WebServer(
-        const WebServerConfig &conf, AuthPtr auth, DbPtr db, WebServerManagerPtr manager
+        const WebServerConfig &conf, DbPtr db, WebServerManagerPtr manager
     ):
         _port(conf.web_server_port),
         _threads(conf.web_server_threads),
-        _auth(std::move(auth)),
         _db(std::move(db)),
         _manager(std::move(manager)),
-        _jwt_expiry(conf.auth_jwt_expiry),
         _is_dev(conf.web_server_dev)
     {}
 
-    void WebServer::initialize() {
+    void WebServer::initialize(const WebServerConfig &conf) {
         std::cout << "infrastructure::Server(): initializing server" << std::endl;
+        // initialize the app
         _app = std::make_unique<CrowApp>();
         _app->signal_clear();
-        auto& cors = _app->get_middleware<crow::SubdomainCORSHandler>();
+        // setup auth
+        auto &auth = _app->get_middleware<crow::AuthenticateHandler>();
+        auth
+            .SetDb(_db)
+            .SetAudience(conf.web_server_auth_audience)
+            .SetIssuer(conf.web_server_auth_issuer)
+        ;
+        // setup cors
+        auto &cors = _app->get_middleware<crow::CORSOptionsHandler>();
         cors
             .global()
                 .methods("POST"_method, "GET"_method, "OPTIONS"_method)
             .prefix("/")
                 .allow_credentials()
                 .headers("Content-Type")
-                .domainOrigin(_is_dev ? "localhost:3000" : "lighting.polis.tv")
+                .origin(_is_dev ? "localhost:3000" : "lighting.polis.tv")
         ;
-        CROW_OPTIONS_ROUTE((*_app), "/api/auth/login")
+        // setup routes
+        CROW_OPTIONS_ROUTE((*_app), "/ping")
             .methods("POST"_method)
-            (std::bind_front(&WebServer::handleAuthLogin, shared_from_this()))
+            ([](){ return "PONG"; })
         ;
-        CROW_OPTIONS_ROUTE((*_app), "/api/auth/identify")
-            .methods("GET"_method)
-            (std::bind_front(&WebServer::handleAuthIdentify, shared_from_this()))
-        ;
+
         std::cout << "infrastructure::Server(): initialized!" << std::endl;
 
     }

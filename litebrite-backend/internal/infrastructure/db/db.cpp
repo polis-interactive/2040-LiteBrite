@@ -51,7 +51,7 @@ namespace infrastructure {
                 seed_hash = 0;
             }
             if (conf.db_seed) {
-                seedDb(seed_hash, conf);
+                seedDb(seed_hash);
             }
             return true;
         } catch (std::exception &e) {
@@ -76,12 +76,12 @@ namespace infrastructure {
         update.exec();
     }
 
-    void Db::seedDb(const int32_t current_seed_hash, const DbConfig &conf) {
+    void Db::seedDb(const int32_t current_seed_hash) {
         const auto seed = seedData();
         const auto seed_data_hash = hashSeedData(seed);
         if (seed_data_hash != current_seed_hash) {
             clearDb();
-            insertSeedData(seed, conf);
+            insertSeedData(seed);
             SQLite::Statement update(*_db, "PRAGMA application_id = " +  std::to_string(seed_data_hash) + ";");
             update.exec();
         }

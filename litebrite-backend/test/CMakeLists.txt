@@ -9,7 +9,6 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 set(
     tests
         main.cpp
-        test_infrastructure/test_auth/test_auth.cpp
         test_infrastructure/test_db/test_creation.cpp
         test_infrastructure/test_udp/test_udp_sender.cpp
         test_infrastructure/test_artnet/test_artnet_controller.cpp

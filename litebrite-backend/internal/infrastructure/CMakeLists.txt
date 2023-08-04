@@ -1,5 +1,4 @@
 
-add_subdirectory(auth)
 add_subdirectory(db)
 add_subdirectory(graphics)
 add_subdirectory(udp)
