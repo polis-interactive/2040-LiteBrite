@@ -27,7 +27,7 @@ namespace infrastructure {
             std::memcpy(_data.data(), &_header, 18);
         }
         void UpdateSequence(const uint8_t sequence) {
-            _data.at(13) = sequence;
+            _data.at(12) = sequence;
         }
         // MAN THIS IS UNSAFE :D
         void CopyBody(uint8_t *body) {

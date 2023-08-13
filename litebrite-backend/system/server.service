@@ -1,0 +1,12 @@
+[Unit]
+Description=Litebrite Server
+After=network-online.target
+StartLimitBurst=6
+StartLimitIntervalSec=360
+
+[Service]
+Restart=on-failure
+ExecStart=/home/snuc/build/2040-LiteBrite/litebrite-backend/bin/embedded
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,42 @@
+{
+  "art_net_buffer_count": 3,
+  "asio_pool_size": 2,
+  "auth_jwt_expiry": 1800,
+  "auth_jwt_refresh": 1200,
+  "db_name": "lighting.db",
+  "db_clear": false,
+  "db_seed": true,
+  "default_display": {
+    "fps": 30.0,
+    "type": "RGBW",
+    "rgbw_color": {
+      "r": 255, "g": 143, "b": 73, "w": 255
+    }
+  },
+  "installation_config": {
+    "buffer_count": 3,
+    "rgbw_pixels": true,
+    "color_temperature": 3000
+  },
+  "installation_layout": {
+    "universes": {
+      "0": { "pixel_count": 52, "pixel_width": 4, "start_index": 0 },
+      "1": { "pixel_count": 52, "pixel_width": 4, "start_index": 208 },
+      "2": { "pixel_count": 52, "pixel_width": 4, "start_index": 416 },
+      "3": { "pixel_count": 52, "pixel_width": 4, "start_index": 624 },
+      "4": { "pixel_count": 26, "pixel_width": 4, "start_index": 832 },
+      "5": { "pixel_count": 26, "pixel_width": 4, "start_index": 936 },
+      "6": { "pixel_count": 26, "pixel_width": 4, "start_index": 1040 },
+      "7": { "pixel_count": 26, "pixel_width": 4, "start_index": 1144 }
+    },
+    "controllers": {
+      "69.4.21.3": [0, 1, 2, 3],
+      "69.4.21.4": [4, 5, 6, 7]
+    }
+  },
+  "web_server_port": 8000,
+  "web_server_threads": 4,
+  "web_server_dev": true,
+  "web_server_auth_audience": "http://localhost:8000",
+  "web_server_auth_issuer": "https://polis-auth-dev.us.auth0.com"
+}
