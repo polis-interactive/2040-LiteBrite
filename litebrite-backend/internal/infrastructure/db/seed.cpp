@@ -9,13 +9,12 @@ using namespace nlohmann::literals;
 namespace infrastructure {
 
     nlohmann::json Db::seedData() {
-        /* this isn't safe, but we'll have a test to make sure its valid so eh */
         return R"({
             "sites": [
                 {
                     "id": 0,
                     "name": "Admin",
-                    "subdomain": "*"
+                    "subdomain": ""
                 },
                 {
                     "id": 1,
@@ -27,19 +26,15 @@ namespace infrastructure {
                 {
                     "id": 0,
                     "email": "bruce@polis.tv",
-                    "password": "broosegoose",
-                    "salt": "",
-                    "needs_password_change": true,
+                    "name": "Broose Goose",
                     "is_admin": true,
                     "site_id": 0
                 },
                 {
                     "id": 1,
                     "email": "nate.hardesty@thompsonhotels.com",
-                    "password": "thompson",
-                    "salt": "",
-                    "needs_password_change": true,
-                    "is_admin": true,
+                    "name": "Nate Hardesty",
+                    "is_admin": false,
                     "site_id": 1
                 }
             ]
@@ -59,10 +54,8 @@ namespace infrastructure {
                 throw std::runtime_error("Failed to insert site");
             }
         }
-        const auto sites = GetAllSites();
         for (const auto& user : data["users"]) {
             auto domain_user = domain::User::from_json(user);
-            domain_user.site_id = sites.at(domain_user.site_id).id;
             const auto ret = CreateUser(domain_user);
             if (!ret) {
                 throw std::runtime_error("Failed to insert user");

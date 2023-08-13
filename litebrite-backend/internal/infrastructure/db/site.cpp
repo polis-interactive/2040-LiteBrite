@@ -8,10 +8,11 @@ namespace infrastructure {
 
     bool Db::CreateSite(const domain::Site &site) {
         SQLite::Statement query(
-            *_db, "INSERT INTO sites (name, subdomain) VALUES (?, ?)"
+            *_db, "INSERT INTO sites (id, name, subdomain) VALUES (?, ?, ?)"
         );
-        query.bind(1, site.name);
-        query.bind(2, site.subdomain);
+        query.bind(1, site.id);
+        query.bind(2, site.name);
+        query.bind(3, site.subdomain);
         int result = query.exec();  // Executes the insert operation
         return result == 1;
     }

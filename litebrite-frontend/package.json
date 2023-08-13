@@ -1,0 +1,36 @@
+{
+  "name": "nuxt-app",
+  "private": true,
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare"
+  },
+  "devDependencies": {
+    "@invictus.codes/nuxt-vuetify": "^0.3.0",
+    "@nuxt/devtools": "latest",
+    "@types/node": "^18.16.19",
+    "nuxt": "^3.6.2",
+    "typescript": "^5.1.6",
+    "vuetify": "^3.3.10"
+  },
+  "dependencies": {
+    "@auth0/auth0-spa-js": "^2.1.1",
+    "@fortawesome/fontawesome-svg-core": "^6.4.0",
+    "@fortawesome/free-brands-svg-icons": "^6.4.0",
+    "@fortawesome/pro-duotone-svg-icons": "^6.4.0",
+    "@fortawesome/pro-light-svg-icons": "^6.4.0",
+    "@fortawesome/pro-regular-svg-icons": "^6.4.0",
+    "@fortawesome/pro-solid-svg-icons": "^6.4.0",
+    "@fortawesome/pro-thin-svg-icons": "^6.4.0",
+    "@fortawesome/sharp-light-svg-icons": "^6.4.0",
+    "@fortawesome/sharp-regular-svg-icons": "^6.4.0",
+    "@fortawesome/sharp-solid-svg-icons": "^6.4.0",
+    "@fortawesome/vue-fontawesome": "^3.0.3",
+    "@pinia/nuxt": "^0.4.11",
+    "jwt-decode": "^3.1.2",
+    "pinia": "^2.1.4"
+  }
+}

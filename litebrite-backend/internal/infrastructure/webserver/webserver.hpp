@@ -8,23 +8,59 @@
 #include <memory>
 #include <thread>
 #include <atomic>
-
 #include <crow.h>
+#include <crow/middlewares/cookie_parser.h>
+
+#include "utils/clock.hpp"
+
+#include "domain/user.hpp"
+
+#include "infrastructure/db/db.hpp"
+
+#include "cors_options_middleware.hpp"
+#include "authenticate_middleware.hpp"
 
 
 namespace infrastructure {
 
     struct WebServerConfig {
+        /* this is a little scuffed; auth should be a middleware,
+         *  and we should pass it a db instance so it can handle all auth ahead of time
+         */
+        uint16_t web_server_port;
+        int web_server_threads;
+        bool web_server_dev;
 
+        std::string web_server_auth_audience;
+        std::string web_server_auth_issuer;
+
+        static WebServerConfig from_json(const nlohmann::json& j) {
+            WebServerConfig conf{};
+            conf.web_server_port = j.at("web_server_port").get<uint16_t>();
+            conf.web_server_threads = j.at("web_server_threads").get<int>();
+            conf.web_server_dev = j.at("web_server_dev").get<bool>();
+            conf.web_server_auth_audience = j.at("web_server_auth_audience").get<std::string>();
+            conf.web_server_auth_issuer = j.at("web_server_auth_issuer").get<std::string>();
+            return conf;
+        }
     };
 
     class WebServer;
     typedef std::shared_ptr<WebServer> WebServerPtr;
 
+    struct WebServerManager {};
+    typedef std::shared_ptr<WebServerManager> WebServerManagerPtr;
+
+    typedef crow::App<crow::AuthenticateHandler, crow::CORSOptionsHandler> CrowApp;
+
     class WebServer: public std::enable_shared_from_this<WebServer> {
     public:
-        [[nodiscard]] static WebServerPtr Create(const WebServerConfig &config);
-        explicit WebServer(const WebServerConfig &conf);
+        [[nodiscard]] static WebServerPtr Create(
+            const WebServerConfig &config, DbPtr db, WebServerManagerPtr manager
+        );
+        explicit WebServer(
+            const WebServerConfig &conf, DbPtr db, WebServerManagerPtr manager
+        );
         void Start();
         void Stop();
         // no copy assignment, no empty assignment
@@ -32,11 +68,19 @@ namespace infrastructure {
         WebServer (const WebServer&) = delete;
         WebServer& operator= (const WebServer&) = delete;
     private:
-        void initialize();
+        const uint16_t _port;
+        const int _threads;
+        DbPtr _db;
+        WebServerManagerPtr _manager;
+        const bool _is_dev;
+
+        void initialize(const WebServerConfig &conf);
         void run();
+
+
         std::atomic<bool> _is_started = { false };
         std::unique_ptr<std::thread> _server_thread = nullptr;
-        crow::SimpleApp _app;
+        std::unique_ptr<CrowApp> _app = nullptr;
     };
 }
 

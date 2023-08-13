@@ -24,17 +24,30 @@ namespace infrastructure {
     struct DbConfig {
         std::filesystem::path db_path;
         std::string db_name;
-        bool clear_db;
-        bool seed_db;
+        bool db_clear;
+        bool db_seed;
+
+        // this is SUPER HACKY, but will work for now. Need to just switch to oauth2 or something
+        static DbConfig from_json(const nlohmann::json& j) {
+            DbConfig conf{};
+            conf.db_path = j.value("db_path", ROOT_DIR),
+            conf.db_name = j.at("db_name").get<std::string>();
+            conf.db_clear = j.at("db_clear").get<bool>();
+            conf.db_seed = j.at("db_seed").get<bool>();
+            return conf;
+        }
     };
 
     class Db;
     typedef std::shared_ptr<Db> DbPtr;
 
-    class Db: std::enable_shared_from_this<Db> {
+    struct DbManager {};
+    typedef std::shared_ptr<DbManager> DbManagerPtr;
+
+    class Db: public std::enable_shared_from_this<Db> {
     public:
-        [[nodiscard]] static DbPtr Create(const DbConfig &conf);
-        explicit Db(const DbConfig &conf);
+        [[nodiscard]] static DbPtr Create(const DbConfig &conf, DbManagerPtr manager);
+        explicit Db(const DbConfig &conf, DbManagerPtr manager);
 
         // public for test; and I'm not fancy enough to protect friend it with some test class...
         [[nodiscard]] int32_t hashSeedData(const nlohmann::json &seed);
@@ -43,6 +56,7 @@ namespace infrastructure {
         [[nodiscard]] bool CreateUser(const domain::User &user);
         [[nodiscard]] bool CreateOrUpdateUser(const domain::User &user);
         // gets return nullptr on failure
+        [[nodiscard]] std::unique_ptr<domain::User> GetUser(const std::string &user_email);
         [[nodiscard]] std::unique_ptr<domain::User> GetUser(const int user_id);
         [[nodiscard]] std::unique_ptr<domain::User> GetUserWithCredentials(const int user_id);
         [[nodiscard]] bool UpdateUser(const domain::User &user);
@@ -63,17 +77,16 @@ namespace infrastructure {
         Db (const Db&) = delete;
         Db& operator= (const Db&) = delete;
     private:
-        bool initialize();
+        bool initialize(const DbConfig &conf);
         void migrateDb(int32_t current_migration_number);
         static std::vector<std::function<void(DatabasePtr &)>> _migrations;
         void clearDb();
         void seedDb(int32_t current_seed_hash);
         nlohmann::json seedData();
         void insertSeedData(const nlohmann::json &seed);
-        const bool _seed_db;
-        const bool _clear_db;
         const std::filesystem::path _db_path;
         const std::string _db_name;
+        DbManagerPtr _manager;
         DatabasePtr _db = nullptr;
     };
 }

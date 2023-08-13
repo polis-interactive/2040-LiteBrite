@@ -10,37 +10,35 @@
 
 namespace domain {
 
+    struct User;
+    typedef std::unique_ptr<User> UserPtr;
+
     struct User {
 
         int id;
         std::string email;
-        /* salted and peppered password */
-        std::string password;
-        std::string salt;
-        bool needs_password_change = true;
+        std::string name;
         bool is_admin = false;
         int site_id = -1;
 
         [[nodiscard]] nlohmann::json to_json() const {
+            /* don't include any sensitive fields */
             nlohmann::json j;
             j["id"] = id;
             j["email"] = email;
-            j["password"] = password;
-            j["salt"] = salt;
-            j["needs_password_change"] = needs_password_change;
+            j["name"] = name;
             j["is_admin"] = is_admin;
             j["site_id"] = site_id;
             return j;
         }
 
         static User from_json(const nlohmann::json& j) {
+            /* allow creation of user with just email / password / site_id */
             return {
                 .id = j.value("id", -1),
                 .email = j.at("email"),
-                .password = j.at("password"),
-                .salt = j.at("salt"),
-                .needs_password_change = j.at("needs_password_change"),
-                .is_admin = j.at("is_admin"),
+                .name = j.value("name", ""),
+                .is_admin = j.value("is_admin", false),
                 .site_id = j.at("site_id"),
             };
         }

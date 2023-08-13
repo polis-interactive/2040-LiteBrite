@@ -10,19 +10,19 @@
 
 namespace infrastructure {
 
-    DbPtr Db::Create(const DbConfig &conf) {
-        auto db = std::make_shared<Db>(conf);
-        if (!db->initialize()) {
+    DbPtr Db::Create(const DbConfig &conf, DbManagerPtr manager) {
+        auto db = std::make_shared<Db>(conf, std::move(manager));
+        if (!db->initialize(conf)) {
             return nullptr;
         }
         return std::move(db);
     }
 
-    Db::Db(const infrastructure::DbConfig &conf):
-        _db_path(conf.db_path), _db_name(conf.db_name), _seed_db(conf.seed_db), _clear_db(conf.clear_db)
+    Db::Db(const infrastructure::DbConfig &conf, DbManagerPtr manager):
+            _db_path(conf.db_path), _db_name(conf.db_name), _manager(std::move(manager))
     {}
 
-    bool Db::initialize() {
+    bool Db::initialize(const DbConfig &conf) {
         // check if the path is valid
         const auto valid_dir = utils::IsValidDirectory(_db_path);
         if (!valid_dir) {
@@ -46,11 +46,11 @@ namespace infrastructure {
             _db = std::make_unique<SQLite::Database>(db_file, SQLite::OPEN_READWRITE|SQLite::OPEN_CREATE);
             (*_db).exec("PRAGMA foreign_keys = ON;");
             migrateDb(migration_number);
-            if (_clear_db && db_exists) {
+            if (conf.db_clear && db_exists) {
                 clearDb();
                 seed_hash = 0;
             }
-            if (_seed_db) {
+            if (conf.db_seed) {
                 seedDb(seed_hash);
             }
             return true;
