@@ -20,8 +20,8 @@ namespace infrastructure {
             db->exec(R"(
                 CREATE TABLE IF NOT EXISTS sites (
                     id INTEGER PRIMARY KEY NOT NULL,
-                    subdomain TEXT NOT NULL,
-                    name TEXT NOT NULL
+                    name TEXT NOT NULL,
+                    slug TEXT NOT NULL
                 );
             )");
             db->exec(R"(

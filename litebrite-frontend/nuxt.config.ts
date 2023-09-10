@@ -4,12 +4,20 @@ import { aliases, fa } from 'vuetify/iconsets/fa'
 
 const Auth0DevConfig = {
   domain: "polis-auth-dev.us.auth0.com",
-  clientId: "5J8Kg0rSQ6PsyBoSZ8KRg2uLEa5sPK4D"
+  clientId: "5J8Kg0rSQ6PsyBoSZ8KRg2uLEa5sPK4D",
+  authorizationParams: {
+    redirect_uri: "http://localhost:3000/applications",
+    audience: "http://localhost:8000"
+  }
 }
 
 const Auth0ProdConfig = {
-  domain: "polis-auth-dev.us.auth0.com",
-  clientId: "5J8Kg0rSQ6PsyBoSZ8KRg2uLEa5sPK4D"
+  domain: "polis-auth.us.auth0.com",
+  clientId: "5J8Kg0rSQ6PsyBoSZ8KRg2uLEa5sPK4D",
+  authorizationParams: {
+    redirect_uri: "https://lighting.polis.tv/applications",
+    audience: "https://lighting.polis.tv/api"
+  }
 }
 
 export default defineNuxtConfig({
@@ -34,7 +42,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       selfUrl: process.env.NODE_ENV === "development" ? "http://localhost:3000/" : "https://lighting.polis.tv",
-      apiUrl: process.env.NODE_ENV === "development" ? "http://localhost:8080/" : "",
+      apiUrl: process.env.NODE_ENV === "development" ? "http://localhost:8000/" : "/api",
       auth0Config: process.env.NODE_ENV === "development" ? Auth0DevConfig : Auth0ProdConfig
     }
   },

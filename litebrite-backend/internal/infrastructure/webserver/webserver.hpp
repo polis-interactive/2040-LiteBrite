@@ -19,6 +19,7 @@
 
 #include "cors_options_middleware.hpp"
 #include "authenticate_middleware.hpp"
+#include "authorize_middleware.hpp"
 
 
 namespace infrastructure {
@@ -51,7 +52,10 @@ namespace infrastructure {
     struct WebServerManager {};
     typedef std::shared_ptr<WebServerManager> WebServerManagerPtr;
 
-    typedef crow::App<crow::AuthenticateHandler, crow::CORSOptionsHandler> CrowApp;
+    typedef crow::App<
+        crow::CORSOptionsHandler, crow::AuthenticateHandler, crow::AuthorizeSiteHandler,
+        crow::AuthorizeAdminHandler
+    > CrowApp;
 
     class WebServer: public std::enable_shared_from_this<WebServer> {
     public:
@@ -76,6 +80,11 @@ namespace infrastructure {
 
         void initialize(const WebServerConfig &conf);
         void run();
+
+        // route handlers
+        void handleIdentify(const crow::request& req, crow::response &res);
+
+        void sendJson(crow::response &res, const nlohmann::json& data);
 
 
         std::atomic<bool> _is_started = { false };

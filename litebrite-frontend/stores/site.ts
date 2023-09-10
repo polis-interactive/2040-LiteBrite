@@ -1,18 +1,26 @@
-import { Site, AvaliableHosts } from '~/lib/domain/sites'
+import { Site, AvaliableSites } from '~/lib/domain/sites'
 import { defineStore } from 'pinia'
+
+export interface SiteStore {
+  currentSite: number,
+  availableSites: Array<Site>
+};
 
 export const useSiteStore = defineStore('site', {
   state: () => ({
-    id: -1,
-    name: '',
-    subdomain: ''
-  } as Site),
+    currentSite: -1,
+    availableSites: []
+  } as SiteStore),
   actions: {
-    setSite(site: Site) {
-      Object.assign(this, site);
+    setAvailableSites(sites: Array<Site>) {
+      this.availableSites = sites;
+      if (sites.length === 1) {
+        this.currentSite = sites[0].id
+      }
     }
   },
   getters: {
-    hasNoSite: (state) => !AvaliableHosts.find((site) => site.id === state.id)
+    hasAnySites: ({ availableSites }) => availableSites.length !== 0,
+    hasMultipleSites: ({ availableSites }) => availableSites.length > 1
   }
 })

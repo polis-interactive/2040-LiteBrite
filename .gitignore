@@ -8,3 +8,7 @@ node_modules
 dist
 *.db
 *.env
+*.key
+*.crt
+litebrite-backend/bin/*
+!litebrite-backend/bin/.gitkeep

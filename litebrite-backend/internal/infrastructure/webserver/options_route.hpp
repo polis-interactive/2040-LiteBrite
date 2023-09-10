@@ -15,4 +15,9 @@ inline crow::response OptionsResponse(const crow::request &req) {
     CROW_ROUTE(app, url).methods("OPTIONS"_method)(OptionsResponse), \
     CROW_ROUTE(app, url)
 
+#define CROW_BP_OPTIONS_ROUTE(bp, url) \
+    CROW_BP_ROUTE(bp, url).methods("OPTIONS"_method)(OptionsResponse), \
+    CROW_BP_ROUTE(bp, url)
+
+
 #endif //INFRASTRUCTURE_WEBSERVER_OPTIONS_ROUTE_HPP

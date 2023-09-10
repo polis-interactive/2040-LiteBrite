@@ -14,12 +14,12 @@ namespace infrastructure {
                 {
                     "id": 0,
                     "name": "Admin",
-                    "subdomain": ""
+                    "slug": "admin"
                 },
                 {
                     "id": 1,
                     "name": "Thompson Lite Brite",
-                    "subdomain": "thompson"
+                    "slug": "thompson-lite-brite"
                 }
             ],
             "users": [

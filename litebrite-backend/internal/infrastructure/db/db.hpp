@@ -56,9 +56,9 @@ namespace infrastructure {
         [[nodiscard]] bool CreateUser(const domain::User &user);
         [[nodiscard]] bool CreateOrUpdateUser(const domain::User &user);
         // gets return nullptr on failure
-        [[nodiscard]] std::unique_ptr<domain::User> GetUser(const std::string &user_email);
-        [[nodiscard]] std::unique_ptr<domain::User> GetUser(const int user_id);
-        [[nodiscard]] std::unique_ptr<domain::User> GetUserWithCredentials(const int user_id);
+        [[nodiscard]] domain::UserPtr GetUser(const std::string &user_email);
+        [[nodiscard]] domain::UserPtr GetUser(const int user_id);
+        [[nodiscard]] domain::UserPtr GetUserWithCredentials(const int user_id);
         [[nodiscard]] bool UpdateUser(const domain::User &user);
         [[nodiscard]] bool DeleteUser(const domain::User &user);
         [[nodiscard]] bool DeleteUser(const int user_id);
@@ -66,8 +66,8 @@ namespace infrastructure {
         /* Site CRUD */
         [[nodiscard]] bool CreateSite(const domain::Site &site);
         [[nodiscard]] bool CreateOrUpdateSite(const domain::Site &site);
-        [[nodiscard]] std::unique_ptr<domain::Site> GetSite(const std::string site_domain);
-        [[nodiscard]] std::unique_ptr<domain::Site> GetSite(const int site_id);
+        [[nodiscard]] domain::SitePtr GetSite(const std::string site_domain);
+        [[nodiscard]] domain::SitePtr GetSite(const int site_id);
         [[nodiscard]] std::vector<domain::Site> GetAllSites();
         [[nodiscard]] bool UpdateSite(const domain::User &user);
         [[nodiscard]] bool DeleteSite(const domain::User &user);
