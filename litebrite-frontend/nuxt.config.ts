@@ -13,7 +13,7 @@ const Auth0DevConfig = {
 
 const Auth0ProdConfig = {
   domain: "polis-auth.us.auth0.com",
-  clientId: "5J8Kg0rSQ6PsyBoSZ8KRg2uLEa5sPK4D",
+  clientId: "J11vLH9vHEJ9sMdSWWitYm9HjVW3U8V5",
   authorizationParams: {
     redirect_uri: "https://lighting.polis.tv/applications",
     audience: "https://lighting.polis.tv/api"
