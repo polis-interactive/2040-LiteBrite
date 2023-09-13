@@ -32,6 +32,14 @@ namespace domain {
             return j;
         }
 
+        [[nodiscard]] nlohmann::json to_application_json() const {
+            /* don't include any sensitive fields */
+            nlohmann::json j;
+            j["email"] = email;
+            j["name"] = name;
+            return j;
+        }
+
         static User from_json(const nlohmann::json& j) {
             /* allow creation of user with just email / password / site_id */
             return {

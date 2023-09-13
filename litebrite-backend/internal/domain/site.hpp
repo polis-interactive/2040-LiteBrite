@@ -10,17 +10,20 @@
 
 namespace domain {
 
+    struct Site;
+    typedef std::unique_ptr<Site> SitePtr;
+
     struct Site {
 
         int id = -1;
         std::string name;
-        std::string subdomain;
+        std::string slug;
 
         [[nodiscard]] nlohmann::json to_json() const {
             nlohmann::json j;
             j["id"] = id;
             j["name"] = name;
-            j["subdomain"] = subdomain;
+            j["slug"] = slug;
             return j;
         }
 
@@ -28,11 +31,17 @@ namespace domain {
             return {
                 .id = j.value("id", -1),
                 .name = j.at("name"),
-                .subdomain = j.at("subdomain"),
+                .slug = j.at("slug")
             };
         }
 
     };
+}
+
+namespace nlohmann {
+    inline void to_json(json& j, const domain::Site& site) {
+        j = site.to_json();
+    }
 }
 
 #endif //DOMAIN_SITE_HPP

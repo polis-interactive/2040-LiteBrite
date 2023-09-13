@@ -16,13 +16,19 @@
         .db_name = "test.db",
         .db_clear = false,
         .db_seed = true,
+        .broose_password="yolo",
+        .thompson_password="bolo"
     };
 }
 
 struct TestDbManager:
     public infrastructure::DbManager,
     public std::enable_shared_from_this<TestDbManager>
-{};
+{
+    bool HashPassword(domain::User &user) final {
+        return true;
+    }
+};
 
 TEST_CASE("Infrastructure_Db-Creation") {
     const auto conf = GetDbTestConf();

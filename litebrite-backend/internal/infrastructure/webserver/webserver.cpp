@@ -31,29 +31,66 @@ namespace infrastructure {
         std::cout << "infrastructure::Server(): initializing server" << std::endl;
         // initialize the app
         _app = std::make_unique<CrowApp>();
+        // don't allow cntrl-c to unwrap crow
         _app->signal_clear();
-        // setup auth
-        auto &auth = _app->get_middleware<crow::AuthenticateHandler>();
-        auth
-            .SetDb(_db)
-            .SetAudience(conf.web_server_auth_audience)
-            .SetIssuer(conf.web_server_auth_issuer)
-        ;
+
         // setup cors
         auto &cors = _app->get_middleware<crow::CORSOptionsHandler>();
         cors
             .global()
-                .methods("POST"_method, "GET"_method, "OPTIONS"_method)
+                .methods("POST"_method, "GET"_method)
             .prefix("/")
                 .allow_credentials()
-                .headers("Content-Type")
-                .origin(_is_dev ? "localhost:3000" : "lighting.polis.tv")
+                .headers("Content-Type, Authorization")
+                .origin(_is_dev ? "http://localhost:3000" : "lighting.polis.tv")
         ;
+
+        // setup authentication
+        auto &auth_n = _app->get_middleware<crow::AuthenticateHandler>();
+        auth_n
+            .SetDb(_db)
+            .SetAudience(conf.web_server_auth_audience)
+            .SetIssuer(conf.web_server_auth_issuer)
+        ;
+
+        // setup authorization
+        auto &auth_z_site = _app->get_middleware<crow::AuthorizeSiteHandler>();
+        auth_z_site.SetDb(_db);
+
         // setup routes
         CROW_OPTIONS_ROUTE((*_app), "/ping")
             .methods("POST"_method)
-            ([](){ return "PONG"; })
+            ([&](const crow::request& req, crow::response &res){
+                nlohmann::json j_res = "PONG_PUBLIC";
+                return sendJson(res, j_res);
+            })
         ;
+
+        CROW_OPTIONS_ROUTE((*_app), "/identify")
+            .methods("POST"_method)
+            (std::bind_front(&WebServer::handleIdentify, shared_from_this()))
+        ;
+
+        // setup site routes
+
+        CROW_OPTIONS_ROUTE((*_app), "/site/ping")
+            .methods("POST"_method)
+            ([&](const crow::request& req, crow::response &res){
+                nlohmann::json j_res = "PONG_SITE";
+                return sendJson(res, j_res);
+            })
+        ;
+
+        // setup admin routes
+
+        CROW_OPTIONS_ROUTE((*_app), "/admin/ping")
+            .methods("POST"_method)
+            ([&](const crow::request& req, crow::response &res){
+                nlohmann::json j_res = "PONG_ADMIN";
+                return sendJson(res, j_res);
+            })
+        ;
+
 
         std::cout << "infrastructure::Server(): initialized!" << std::endl;
 
@@ -92,11 +129,18 @@ namespace infrastructure {
     }
 
     void WebServer::run() {
-        std::cout << "infrastructure::Server::run(): running on port 8080 async" << std::endl;
+        std::cout << "infrastructure::Server::run(): running on port " << _port << " async" << std::endl;
         _app->
             port(_port)
             .concurrency(_threads)
             .run();
         std::cout << "infrastructure::Server::run(): server stopped" << std::endl;
+    }
+
+    void WebServer::sendJson(crow::response &res, const nlohmann::json &data) {
+        res.add_header("Access-Control-Allow-Origin", "*");
+        res.add_header("Content-Type", "application/json");
+        res.write(data.dump());
+        res.end();
     }
 }

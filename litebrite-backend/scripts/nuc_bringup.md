@@ -1,3 +1,4 @@
+
 ## wake on power
 - Enter bios (f2 on power up)
 - advanced tab
@@ -40,6 +41,7 @@ $ cd build
 $ git clone https://github.com/polis-interactive/2040-LiteBrite
 $ echo 'follow ./2040-LiteBrite/litebrite-backend/scripts/setup-third-party.sh'
 ```
+
 
 ## Copy system config
 

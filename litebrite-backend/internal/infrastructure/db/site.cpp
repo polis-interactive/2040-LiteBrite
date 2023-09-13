@@ -8,11 +8,11 @@ namespace infrastructure {
 
     bool Db::CreateSite(const domain::Site &site) {
         SQLite::Statement query(
-            *_db, "INSERT INTO sites (id, name, subdomain) VALUES (?, ?, ?)"
+            *_db, "INSERT INTO sites (id, name, slug) VALUES (?, ?, ?)"
         );
         query.bind(1, site.id);
         query.bind(2, site.name);
-        query.bind(3, site.subdomain);
+        query.bind(3, site.slug);
         int result = query.exec();  // Executes the insert operation
         return result == 1;
     }
@@ -22,12 +22,27 @@ namespace infrastructure {
         SQLite::Statement query(*_db, "SELECT * FROM sites;");
         while (query.executeStep()) {
             domain::Site site;
-            site.id = query.getColumn(0);
-            site.subdomain = query.getColumn(1).getText();
-            site.name = query.getColumn(2).getText();
+            site.id = query.getColumn("id");
+            site.name = query.getColumn("name").getText();
+            site.slug = query.getColumn("slug").getText();
             sites.push_back(site);
         }
         return sites;
+    }
+
+    domain::SitePtr Db::GetSite(const int site_id) {
+        SQLite::Statement query(*_db, "SELECT * FROM sites WHERE id = ?");
+        query.bind(1, site_id);
+
+        if (query.executeStep()) {
+            auto site = std::make_unique<domain::Site>();
+            site->id = query.getColumn("id");
+            site->name = query.getColumn("name").getString();
+            site->slug = query.getColumn("slug").getString();
+            return site;
+        }
+
+        return nullptr;
     }
 
 }

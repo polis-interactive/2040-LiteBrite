@@ -1,21 +1,7 @@
 <script setup lang="ts">
-import { Site, AvaliableHosts } from '~/lib/domain/sites'
 import { AsyncTimeout } from '~/lib/utils'
 
-const auth0 = await useAuth0();
-
 const loading = ref(false);
-
-async function handleSiteSelection(site: Site) {
-  loading.value = true;
-  await AsyncTimeout(500);
-  await auth0.value.loginWithRedirect({
-    authorizationParams: {
-      redirect_uri: `${window.location.origin}/login`
-    }
-  })
-}
-
 
 definePageMeta({
   layout: 'centered'
@@ -39,6 +25,8 @@ definePageMeta({
         class="login__title mb-2"
       />
       <v-card-text class="login__body">
+        Hello world!
+        <!--
         <v-list 
             color="secondary"
             nav
@@ -46,7 +34,7 @@ definePageMeta({
             @click:select="({ id }) => { handleSiteSelection(id as Site) }"
           >
             <template
-              v-for="(site, idx) in AvaliableHosts"
+              v-for="(site, idx) in AvaliableSites"
               :key="site.id"
             >
               <v-list-item
@@ -56,6 +44,7 @@ definePageMeta({
               </v-list-item>
             </template>
           </v-list>
+          -->
       </v-card-text>
     </v-card>
   </div>

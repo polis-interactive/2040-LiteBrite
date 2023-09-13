@@ -28,11 +28,15 @@ namespace crow
     {
         struct context
         {
-            domain::UserPtr _user = nullptr;
+            domain::UserPtr user = nullptr;
         };
 
         void before_handle(crow::request& req, crow::response& res, context& ctx)
         {
+            if (req.method == "OPTIONS"_method || req.url.substr(0, _public_prefix.size()) == _public_prefix) {
+                // No authN needed on preflight / public routes
+                return;
+            }
             if (!middlewareIsConfigured(res)) {
                 return;
             }
@@ -174,8 +178,10 @@ namespace crow
                 res.end();
                 return;
             }
-            ctx._user = std::move(user);
+            ctx.user = std::move(user);
         }
+
+        const std::string _public_prefix = "/public/";
 
         const std::string _token_prefix = "Bearer ";
         infrastructure::DbPtr _db = nullptr;

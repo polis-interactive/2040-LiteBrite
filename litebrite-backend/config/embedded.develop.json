@@ -20,18 +20,10 @@
   },
   "installation_layout": {
     "universes": {
-      "0": { "pixel_count": 52, "pixel_width": 4, "start_index": 0 },
-      "1": { "pixel_count": 52, "pixel_width": 4, "start_index": 208 },
-      "2": { "pixel_count": 52, "pixel_width": 4, "start_index": 416 },
-      "3": { "pixel_count": 52, "pixel_width": 4, "start_index": 624 },
-      "4": { "pixel_count": 26, "pixel_width": 4, "start_index": 832 },
-      "5": { "pixel_count": 26, "pixel_width": 4, "start_index": 936 },
-      "6": { "pixel_count": 26, "pixel_width": 4, "start_index": 1040 },
-      "7": { "pixel_count": 26, "pixel_width": 4, "start_index": 1144 }
+      "0": { "pixel_count": 9, "pixel_width": 4, "start_index": 0 }
     },
     "controllers": {
-      "69.4.21.3": [0, 1, 2, 3],
-      "69.4.21.4": [4, 5, 6, 7]
+      "69.4.20.6": [0]
     }
   },
   "web_server_port": 8000,

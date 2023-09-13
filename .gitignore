@@ -12,5 +12,6 @@ dist
 *.key
 *.crt
 *.client
+litebrite-backend/bin/*
+!litebrite-backend/bin/.gitkeep
 
-bin/*
