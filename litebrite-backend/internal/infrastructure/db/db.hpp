@@ -56,9 +56,11 @@ namespace infrastructure {
         [[nodiscard]] bool CreateUser(const domain::User &user);
         [[nodiscard]] bool CreateOrUpdateUser(const domain::User &user);
         // gets return nullptr on failure
+
         [[nodiscard]] domain::UserPtr GetUser(const std::string &user_email);
         [[nodiscard]] domain::UserPtr GetUser(const int user_id);
         [[nodiscard]] domain::UserPtr GetUserWithCredentials(const int user_id);
+
         [[nodiscard]] bool UpdateUser(const domain::User &user);
         [[nodiscard]] bool DeleteUser(const domain::User &user);
         [[nodiscard]] bool DeleteUser(const int user_id);

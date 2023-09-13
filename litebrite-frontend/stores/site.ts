@@ -1,3 +1,4 @@
+
 import { Site, AvaliableSites } from '~/lib/domain/sites'
 import { defineStore } from 'pinia'
 

@@ -15,6 +15,7 @@ namespace infrastructure {
                     "id": 0,
                     "name": "Admin",
                     "slug": "admin"
+
                 },
                 {
                     "id": 1,

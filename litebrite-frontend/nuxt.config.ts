@@ -18,6 +18,7 @@ const Auth0ProdConfig = {
     redirect_uri: "https://lighting.polis.tv/applications",
     audience: "https://lighting.polis.tv/api"
   }
+
 }
 
 export default defineNuxtConfig({

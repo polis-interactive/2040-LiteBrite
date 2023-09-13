@@ -18,6 +18,7 @@ namespace infrastructure {
         return result == 1;
     }
 
+
     domain::UserPtr  Db::GetUser(const std::string &user_email) {
         SQLite::Statement query(*_db, "SELECT * FROM users WHERE email = ?");
         query.bind(1, user_email);
@@ -34,6 +35,7 @@ namespace infrastructure {
 
         return nullptr;
     }
+
 
     domain::UserPtr  Db::GetUser(const int user_id) {
         SQLite::Statement query(*_db, "SELECT * FROM users WHERE id = ?");

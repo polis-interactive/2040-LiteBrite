@@ -46,7 +46,7 @@ namespace infrastructure {
     void Graphics::generateBuffers(const domain::UniverseMap &universes, const unsigned int buffer_count) {
         auto max_universe = std::max_element(universes.begin(), universes.end(),
             [](const auto& a, const auto& b) {
-                return a.second.GetLastLength() > b.second.GetLastLength();
+                return a.second.GetLastLength() < b.second.GetLastLength();
             }
         );
         const auto buffer_size = max_universe->second.GetLastLength();

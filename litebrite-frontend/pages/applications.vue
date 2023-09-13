@@ -3,7 +3,6 @@ import { AsyncTimeout } from '~/lib/utils'
 
 const loading = ref(false);
 
-
 definePageMeta({
   layout: 'centered'
 })

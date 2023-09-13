@@ -10,7 +10,7 @@
     "fps": 30.0,
     "type": "RGBW",
     "rgbw_color": {
-      "r": 0, "g": 0, "b": 0, "w": 0
+      "r": 0, "g": 255, "b": 0, "w": 0
     }
   },
   "installation_config": {

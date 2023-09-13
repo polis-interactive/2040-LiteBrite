@@ -19,7 +19,9 @@
 
 #include "cors_options_middleware.hpp"
 #include "authenticate_middleware.hpp"
+
 #include "authorize_middleware.hpp"
+
 
 
 namespace infrastructure {
@@ -85,7 +87,6 @@ namespace infrastructure {
         void handleIdentify(const crow::request& req, crow::response &res);
 
         void sendJson(crow::response &res, const nlohmann::json& data);
-
 
         std::atomic<bool> _is_started = { false };
         std::unique_ptr<std::thread> _server_thread = nullptr;

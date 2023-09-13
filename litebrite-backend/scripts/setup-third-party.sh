@@ -1,4 +1,15 @@
 
+# setup boost
+
+$ cd ~/build
+$ wget -O boost_1_81_0.tar.gz https://boostorg.jfrog.io/artifactory/main/release/1.81.0/source/boost_1_81_0.tar.gz
+$ tar -xvzf boost_1_81_0.tar.gz
+$ cd boost_1_81_0
+$ ./bootstrap.sh gcc
+$ ./b2 --with-system --with-thread --with-date_time --with-regex --with-serialization stage
+$ sudo cp -r boost_1_81_0 /user/local/lib/boost_1_81_0
+
+
 # setup crow
 
 $ cd ~/build
