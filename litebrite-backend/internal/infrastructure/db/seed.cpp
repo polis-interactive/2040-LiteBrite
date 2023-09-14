@@ -33,6 +33,13 @@ namespace infrastructure {
                 },
                 {
                     "id": 1,
+                    "email": "bruce+not-admin@polis.tv",
+                    "name": "Broose Goose NonAdmin",
+                    "is_admin": false,
+                    "site_id": 1
+                },
+                {
+                    "id": 2,
                     "email": "nate.hardesty@thompsonhotels.com",
                     "name": "Nate Hardesty",
                     "is_admin": false,

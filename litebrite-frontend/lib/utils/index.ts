@@ -6,3 +6,7 @@ export const AsyncTimeout = (ms: number): Promise<void> => {
         }, ms)
     })
 }
+
+export const InternalNavigateTo: typeof navigateTo = (to) => {
+    return navigateTo(`${to}?internal_guard=true`, { replace: true });
+}
