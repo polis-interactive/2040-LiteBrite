@@ -32,6 +32,12 @@ export default defineNuxtConfig({
   imports: {
     dirs: ['lib']
   },
+  app: {
+    head: {
+      link: [{ rel: 'icon', type: 'image/x-icon', href: '/images/site/favicon.ico'}],
+      title: 'Polis - Light Controller'
+    }
+  },
   typescript: {
     tsConfig: {
       typeRoots: [

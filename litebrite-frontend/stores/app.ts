@@ -4,7 +4,8 @@ import { defineStore } from 'pinia'
 export const useAppStore = defineStore('app', {
   state: () => ({
     hasAuth: false,
-    hasIdentified: false
+    hasIdentified: false,
+    hasInitialized: false,
   } as App ),
   actions: {
     setAuthDone() {
@@ -12,6 +13,9 @@ export const useAppStore = defineStore('app', {
     },
     setIdentifyDone() {
       this.hasIdentified = true;
+    },
+    setHasInitialized() {
+      this.hasInitialized = true;
     }
   }
 })

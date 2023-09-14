@@ -2,25 +2,52 @@ import { useSiteStore } from "~/stores/site"
 import { useUserStore } from "~/stores/user"
 import { useAppStore } from "~/stores/app"
 
+import { InternalNavigateTo } from '~/lib/utils'
+
 import { useAuth0 } from "~/composables/useAuth"
 
 export default defineNuxtRouteMiddleware(async (to, from) => {
-  const router = useRouter();
-  console.log("navigating")
-  await router.push({
-    query: "", hash: "",
-  });
-  // don't run on the server
-  if (process.server || Object.hasOwn(to.query, 'internal_guard')) {
-    return;
-  } 
-  const app = useNuxtApp();
-  const appStore = useAppStore();
-  if (!appStore.hasAuth) {
-    const auth0 = await useAuth0();
-    await auth0.value.loginWithRedirect();
+    // don't run on the server
+  if (process.server) {
     return;
   }
-  // clear query params just in case
-  return navigateTo("/unauthroized?internal_guard=true", { replace: true });
-})
+  const appStore = useAppStore();
+  if (Object.hasOwn(to.query, 'internal_guard')) {
+    appStore.setHasInitialized();
+    return;
+  }
+  if (!appStore.hasAuth) {
+    if (to.path !== '/logout') {
+      const auth0 = await useAuth0();
+      await auth0.value.loginWithRedirect();
+    } else {
+      // shouldn't get here because auth0 will add the query for us
+      appStore.setHasInitialized();
+    }
+    return;
+  } else if (to.path === '/logout') {
+    const auth0 = await useAuth0();
+    await auth0.value.logout();
+    // we can just return because of the redirect
+    return;
+  }
+  const siteStore = useSiteStore();
+  if (!appStore.hasIdentified || !siteStore.hasAnySites) {
+    // should probably differentiate between hasIdentified failing (500) and hasAnySites (401)
+    return InternalNavigateTo("/unauthroized");
+  }
+  // make sure user is redirected to their current site, or the application selection screen
+  if (siteStore.hasCurrentSite) {
+    const needsRoute = `/applications/${siteStore.currentSite?.slug}`
+    if (!to.path.startsWith(needsRoute)) {
+      return InternalNavigateTo(needsRoute);
+    } 
+  } else {
+    const applicationsRoute = '/applications'
+    if (to.path != applicationsRoute) {
+      return InternalNavigateTo(applicationsRoute);
+    }
+  }
+  appStore.setHasInitialized();
+  return InternalNavigateTo(to.path)
+});

@@ -13,7 +13,7 @@ namespace infrastructure {
             nlohmann::json sites = _db->GetAllSites();
             j_res["sites"] = sites;
         } else {
-            auto site = _db->GetSite(user->id);
+            auto site = _db->GetSite(user->site_id);
             j_res["sites"] = {site->to_json()};
         }
         sendJson(res, j_res);

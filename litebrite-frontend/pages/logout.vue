@@ -6,7 +6,7 @@ definePageMeta({
 
 <template>
   <div>
-    Checking session
+    You've been logged out bitch!
   </div>
 </template>
 
