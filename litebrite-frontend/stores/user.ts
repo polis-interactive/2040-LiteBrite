@@ -12,5 +12,14 @@ export const useUserStore = defineStore('user', {
     setUser(user: User) {
       Object.assign(this, user);
     }
-  }
+  },
+  getters: {
+    tryGetInitials: ({ name }) => {
+      const nameSplit = name.split(" ");
+      if (nameSplit.length !== 2) {
+        return null;
+      }
+      return nameSplit.map((n)=>n[0].toUpperCase()).join("");
+    }
+  },
 })

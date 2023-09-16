@@ -21,11 +21,18 @@ const Auth0ProdConfig = {
 
 }
 
+const isDev = process.env.NODE_ENV === "development";
+
 export default defineNuxtConfig({
   modules: [
     '@invictus.codes/nuxt-vuetify',
-    '@pinia/nuxt'
+    '@pinia/nuxt',
+    '@pinia-plugin-persistedstate/nuxt',
   ],
+  piniaPersistedstate: {
+    storage: 'localStorage',
+    debug: isDev
+  },
   css: [
     '@fortawesome/fontawesome-svg-core/styles.css'
   ],
@@ -48,9 +55,9 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {
     public: {
-      selfUrl: process.env.NODE_ENV === "development" ? "http://localhost:3000/" : "https://lighting.polis.tv",
-      apiUrl: process.env.NODE_ENV === "development" ? "http://localhost:8000/" : "/api",
-      auth0Config: process.env.NODE_ENV === "development" ? Auth0DevConfig : Auth0ProdConfig
+      selfUrl: isDev ? "http://localhost:3000/" : "https://lighting.polis.tv",
+      apiUrl: isDev ? "http://localhost:8000/" : "/api",
+      auth0Config: isDev ? Auth0DevConfig : Auth0ProdConfig
     }
   },
   ssr: true,
@@ -87,5 +94,5 @@ export default defineNuxtConfig({
       useVuetifyLabs: false,
     }
   },
-  devtools: { enabled: true },
+  devtools: { enabled: isDev },
 })
