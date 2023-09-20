@@ -73,12 +73,17 @@ namespace infrastructure {
 
         // setup site routes
 
-        CROW_OPTIONS_ROUTE((*_app), "/site/ping")
+        CROW_OPTIONS_ROUTE((*_app), "/site/display/fetch")
             .methods("POST"_method)
-            ([&](const crow::request& req, crow::response &res){
-                nlohmann::json j_res = "PONG_SITE";
-                return sendJson(res, j_res);
-            })
+            (std::bind_front(&WebServer::handleSiteDisplayFetch, shared_from_this()))
+        ;
+        CROW_OPTIONS_ROUTE((*_app), "/site/display/update")
+            .methods("POST"_method)
+            (std::bind_front(&WebServer::handleSiteDisplayUpdate, shared_from_this()))
+        ;
+        CROW_OPTIONS_ROUTE((*_app), "/site/display/delete")
+            .methods("POST"_method)
+            (std::bind_front(&WebServer::handleSiteDisplayDelete, shared_from_this()))
         ;
 
         // setup admin routes

@@ -17,6 +17,10 @@
 #include "domain/display.hpp"
 #include "domain/installation.hpp"
 
+namespace service {
+    class EmbeddedService;
+}
+
 namespace infrastructure {
 
     struct GraphicsConfig {
@@ -62,8 +66,12 @@ namespace infrastructure {
 
     class Graphics: public std::enable_shared_from_this<Graphics> {
     public:
-        [[nodiscard]] static GraphicsPtr Create(const GraphicsConfig &config, GraphicsManagerPtr manager);
-        explicit Graphics(const GraphicsConfig &config, GraphicsManagerPtr manager);
+        [[nodiscard]] static GraphicsPtr Create(
+            const GraphicsConfig &config, GraphicsManagerPtr manager, domain::DisplayPtr &&db_display
+        );
+        Graphics(
+            const GraphicsConfig &config, GraphicsManagerPtr manager, domain::DisplayPtr &&db_display
+        );
         void Start();
         void Stop();
         ~Graphics();
@@ -71,6 +79,9 @@ namespace infrastructure {
         Graphics() = delete;
         Graphics (const Graphics&) = delete;
         Graphics& operator= (const Graphics&) = delete;
+    protected:
+        friend class ::service::EmbeddedService;
+        void SetDisplay(const domain::Display &display);
     private:
         void generateBuffers(const domain::UniverseMap &universes, const unsigned int buffer_count);
         void run(const std::stop_token &st);

@@ -35,7 +35,7 @@ namespace infrastructure {
         query.bind(1, site_id);
 
         if (query.executeStep()) {
-            auto site = std::make_unique<domain::Site>();
+            auto site = std::make_shared<domain::Site>();
             site->id = query.getColumn("id");
             site->name = query.getColumn("name").getString();
             site->slug = query.getColumn("slug").getString();

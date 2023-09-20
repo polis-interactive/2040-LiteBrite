@@ -34,6 +34,14 @@ namespace infrastructure {
                     FOREIGN KEY(site_id) REFERENCES sites(id) ON DELETE CASCADE
                 );
             )");
+            db->exec(R"(
+                CREATE TABLE IF NOT EXISTS displays (
+                    id INTEGER PRIMARY KEY NOT NULL,
+                    site_id INTEGER NOT NULL UNIQUE,
+                    display TEXT NOT NULL,
+                    FOREIGN KEY(site_id) REFERENCES sites(id) ON DELETE CASCADE
+                );
+            )");
         }
     };
 

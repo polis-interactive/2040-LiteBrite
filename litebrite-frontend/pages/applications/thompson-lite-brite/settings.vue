@@ -1,12 +1,9 @@
 <script setup lang="ts">
-definePageMeta({
-  layout: 'centered'
-})
 </script>
 
 <template>
   <div>
-    Unauthorized access
+    Settings
   </div>
 </template>
 

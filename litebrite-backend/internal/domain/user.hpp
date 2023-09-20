@@ -11,7 +11,7 @@
 namespace domain {
 
     struct User;
-    typedef std::unique_ptr<User> UserPtr;
+    typedef std::shared_ptr<User> UserPtr;
 
     struct User {
 

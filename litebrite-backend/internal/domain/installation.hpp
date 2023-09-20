@@ -81,6 +81,8 @@ namespace domain {
             // available to all
             std::optional<CRGB> color_correction;
             std::optional<float> gamma;
+            std::optional<double> fps;
+
 
 
             [[nodiscard]] nlohmann::json to_json() const {
@@ -98,6 +100,9 @@ namespace domain {
                 }
                 if (gamma.has_value()) {
                     j["gamma"] = gamma.value();
+                }
+                if (fps.has_value()) {
+                    j["fps"] = fps.value();
                 }
                 return j;
             }
@@ -117,6 +122,9 @@ namespace domain {
                 }
                 if (j.contains("gamma")) {
                     c.gamma = { j.at("gamma").get<float>() };
+                }
+                if (j.contains("fps")) {
+                    c.fps = { j.at("fps").get<double>() };
                 }
                 return c;
             }

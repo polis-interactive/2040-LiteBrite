@@ -14,6 +14,7 @@
 #include "utils/clock.hpp"
 
 #include "domain/user.hpp"
+#include "domain/display.hpp"
 
 #include "infrastructure/db/db.hpp"
 
@@ -51,7 +52,11 @@ namespace infrastructure {
     class WebServer;
     typedef std::shared_ptr<WebServer> WebServerPtr;
 
-    struct WebServerManager {};
+    struct WebServerManager {
+        virtual domain::Display GetDefaultDisplay() = 0;
+        virtual void SetCurrentDisplay(const domain::Display &display) = 0;
+        virtual void ResetCurrentDisplay() = 0;
+    };
     typedef std::shared_ptr<WebServerManager> WebServerManagerPtr;
 
     typedef crow::App<
@@ -83,8 +88,12 @@ namespace infrastructure {
         void initialize(const WebServerConfig &conf);
         void run();
 
-        // route handlers
+        /* ROUTE HANDLERS */
         void handleIdentify(const crow::request& req, crow::response &res);
+        // CRUD on display
+        void handleSiteDisplayFetch(const crow::request& req, crow::response &res);
+        void handleSiteDisplayUpdate(const crow::request& req, crow::response &res);
+        void handleSiteDisplayDelete(const crow::request& req, crow::response &res);
 
         void sendJson(crow::response &res, const nlohmann::json& data);
 

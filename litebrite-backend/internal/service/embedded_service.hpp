@@ -18,6 +18,7 @@ namespace service {
         infrastructure::AsioContextConfig asio_context_config;
         infrastructure::DbConfig db_config;
         infrastructure::GraphicsConfig graphics_config;
+        int site_id;
         infrastructure::WebServerConfig web_server_config;
     };
 
@@ -32,7 +33,7 @@ namespace service {
     {
     public:
         [[nodiscard]] static EmbeddedServicePtr Create(const EmbeddedConfig &config);
-        EmbeddedService();
+        explicit EmbeddedService(EmbeddedConfig config);
         void Start();
         void Stop();
         void Unset();
@@ -41,12 +42,17 @@ namespace service {
         // graphics
         void PostGraphicsUpdate(utils::SizedBufferPtr &&pixels) final;
 
+        // webserver
+        domain::Display GetDefaultDisplay() final;
+        void SetCurrentDisplay(const domain::Display &display) final;
+        void ResetCurrentDisplay() final;
 
         // no copy assignment
         EmbeddedService (const EmbeddedService&) = delete;
         EmbeddedService& operator= (const EmbeddedService&) = delete;
     private:
-        void initialize(const EmbeddedConfig &config);
+        void initialize();
+        const EmbeddedConfig _config;
         std::atomic_bool _is_started = false;
         infrastructure::ArtNetPtr _art_net;
         infrastructure::AsioContextPtr _asio_context;

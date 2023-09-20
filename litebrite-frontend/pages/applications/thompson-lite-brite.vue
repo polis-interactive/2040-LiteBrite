@@ -1,15 +1,23 @@
 <script setup lang="ts">
-definePageMeta({
-  layout: 'default'
-})
+import { AppPage } from '~/lib/domain/app';
+import { useAppStore } from "~/stores/app"
+
+const appPages: Array<AppPage> = [
+  {
+    display: 'Display',
+    slug: 'display'
+  },
+  {
+    display: 'Settings',
+    slug: 'settings'
+  }
+]
+
+const appStore = useAppStore();
+appStore.setAppPages(appPages);
 </script>
 
+
 <template>
-  <div>
-    Thompson
-  </div>
+  <NuxtPage />
 </template>
-
-<style scoped>
-
-</style>

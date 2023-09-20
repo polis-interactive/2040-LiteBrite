@@ -34,7 +34,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   const siteStore = useSiteStore();
   if (!appStore.hasIdentified || !siteStore.hasAnySites) {
     // should probably differentiate between hasIdentified failing (500) and hasAnySites (401)
-    return InternalNavigateTo("/unauthroized");
+    return InternalNavigateTo("/unauthorized");
   }
   // make sure user is redirected to their current site, or the application selection screen
   if (siteStore.hasCurrentSite) {

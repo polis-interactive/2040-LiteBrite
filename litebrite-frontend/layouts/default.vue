@@ -5,7 +5,7 @@ import AppHeader from '~/components/layout/header/index.vue'
 
 <template>
     <initializer-guard>
-        <v-layout>
+        <v-layout class="default__wrapper">
             <app-header />
             <v-main>
                 <slot />
@@ -15,5 +15,11 @@ import AppHeader from '~/components/layout/header/index.vue'
 </template>
 
 <style scoped>
-
+.default__wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
 </style>

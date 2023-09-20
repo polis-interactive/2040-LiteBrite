@@ -44,9 +44,16 @@ export const useSiteStore = defineStore('site', {
     hasAnySites: ({ availableSites }) => availableSites.length !== 0,
     doesThisResolve: () => false,
     hasCurrentSite: ({ currentSiteId }) => currentSiteId !== -1,
-    currentSite: ({ availableSites, currentSiteId }) => 
-      currentSiteId !== -1 ? availableSites.find(site => site.id == currentSiteId) : undefined,
-    hasMultipleSites: ({ availableSites }) => availableSites.length > 1
+    currentSite({ availableSites, currentSiteId }): undefined | Site {
+      if (currentSiteId === -1) {
+        return undefined;
+      }
+      return availableSites.find(site => site.id == currentSiteId);
+    },
+    hasMultipleSites: ({ availableSites }) => availableSites.length > 1,
+    siteSlug(): string {
+      return `/applications/${this.currentSite?.slug}`
+    }
   },
   persist: {
     paths: ['currentSiteId']

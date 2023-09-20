@@ -8,18 +8,22 @@
 
 namespace infrastructure {
 
-    GraphicsPtr Graphics::Create(const GraphicsConfig &config, GraphicsManagerPtr manager) {
-        auto graphics = std::make_shared<Graphics>(config, std::move(manager));
+    GraphicsPtr Graphics::Create(
+        const GraphicsConfig &config, GraphicsManagerPtr manager, domain::DisplayPtr &&db_display
+    ) {
+        auto graphics = std::make_shared<Graphics>(config, std::move(manager), std::move(db_display));
         return std::move(graphics);
     }
 
-    Graphics::Graphics(const GraphicsConfig &config, GraphicsManagerPtr manager):
+    Graphics::Graphics(
+        const GraphicsConfig &config, GraphicsManagerPtr manager, domain::DisplayPtr &&db_display
+    ):
         _manager(std::move(manager))
     {
 
         const auto &layout = config.installation_layout;
         const auto &conf = config.installation_config;
-        const auto &display = config.default_display;
+        const auto &display = db_display != nullptr ? *db_display : config.default_display;
 
         generateBuffers(layout.universes, conf.buffer_count);
 
@@ -32,14 +36,24 @@ namespace infrastructure {
             }
         }
 
-        _frame_time = utils::QuickDuration(1.0 / display.fps);
+        _frame_time = utils::QuickDuration(1.0 / conf.fps.value_or(30.0));
 
+        SetDisplay(display);
+    }
+
+    void Graphics::SetDisplay(const domain::Display &display) {
+        // I should lock a mutex here but meh
         _display_type = display.type;
-        if (display.rgb_color.has_value()) {
-            _rgb_color = display.rgb_color.value();
-        }
-        if (display.rgbw_color.has_value()) {
-            _rgbw_color = display.rgbw_color.value();
+        switch (_display_type) {
+            case domain::DisplayType::RGB:
+            case domain::DisplayType::RGB_WITH_W_INTERPOLATION:
+                _rgbw_color = {0};
+                _rgb_color = display.rgb_color.value();
+                break;
+            case domain::DisplayType::RGBW:
+                _rgb_color = {0};
+                _rgbw_color = display.rgbw_color.value();
+                break;
         }
     }
 

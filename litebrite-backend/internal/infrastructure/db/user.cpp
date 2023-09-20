@@ -24,7 +24,7 @@ namespace infrastructure {
         query.bind(1, user_email);
 
         if (query.executeStep()) {
-            auto user = std::make_unique<domain::User>();
+            auto user = std::make_shared<domain::User>();
             user->id = query.getColumn("id");
             user->email = query.getColumn("email").getString();
             user->name = query.getColumn("name").getString();
@@ -42,7 +42,7 @@ namespace infrastructure {
         query.bind(1, user_id);
 
         if (query.executeStep()) {
-            auto user = std::make_unique<domain::User>();
+            auto user = std::make_shared<domain::User>();
             user->id = query.getColumn("id");
             user->email = query.getColumn("email").getString();
             user->name = query.getColumn("name").getString();
