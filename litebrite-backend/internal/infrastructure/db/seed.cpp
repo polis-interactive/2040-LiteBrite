@@ -44,6 +44,13 @@ namespace infrastructure {
                     "name": "Nate Hardesty",
                     "is_admin": false,
                     "site_id": 1
+                },
+                {
+                    "id": 3,
+                    "email": "saul.arenas@thompsonhotels.com",
+                    "name": "Saul Arenas",
+                    "is_admin": false,
+                    "site_id": 1
                 }
             ]
         })"_json;;
