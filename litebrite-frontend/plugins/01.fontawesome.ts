@@ -7,13 +7,44 @@ import {
     faInstagram, faVimeoV, faTiktok
 } from '@fortawesome/free-brands-svg-icons'
 
+import {
+    fas,
+    faUser, faRightFromBracket, faTrash, faFloppyDisk, faArrowsRotate
+} from '@fortawesome/pro-solid-svg-icons'
+
+import {
+    fad,
+    faCaretUp
+} from '@fortawesome/pro-duotone-svg-icons'
+
+import {
+    fass,
+    faSwap
+} from '@fortawesome/sharp-solid-svg-icons'
+
+
 library.add(
-    fab,
-    faInstagram, faVimeoV, faTiktok
+    fas,
+    faUser,
+    faRightFromBracket,
+    faTrash,
+    faFloppyDisk,
+    faArrowsRotate
 )
+
+library.add(
+    fad,
+    faCaretUp
+)
+
+library.add(
+    fass,
+    faSwap
+)
+
 
 config.autoAddCss = false
 
 export default defineNuxtPlugin((nuxtApp) => {
-    nuxtApp.vueApp.component('font-awesome-icon', FontAwesomeIcon)
+    nuxtApp.vueApp.component('fa-icon', FontAwesomeIcon)
 })

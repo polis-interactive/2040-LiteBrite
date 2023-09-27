@@ -7,13 +7,13 @@
   "db_clear": false,
   "db_seed": true,
   "default_display": {
-    "fps": 30.0,
     "type": "RGBW",
     "rgbw_color": {
       "r": 255, "g": 143, "b": 73, "w": 255
     }
   },
   "installation_config": {
+    "fps": 30.0,
     "buffer_count": 3,
     "rgbw_pixels": true,
     "color_temperature": 3000
@@ -34,6 +34,7 @@
       "69.4.21.4": [4, 5, 6, 7]
     }
   },
+  "site_id": 1,
   "web_server_port": 8000,
   "web_server_threads": 4,
   "web_server_dev": true,

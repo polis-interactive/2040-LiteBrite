@@ -11,7 +11,7 @@
 namespace domain {
 
     struct Site;
-    typedef std::unique_ptr<Site> SitePtr;
+    typedef std::shared_ptr<Site> SitePtr;
 
     struct Site {
 

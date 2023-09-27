@@ -13,6 +13,7 @@ int main(int argc, char* argv[]) {
         .asio_context_config = infrastructure::AsioContextConfig::from_json(json_config),
         .db_config = infrastructure::DbConfig::from_json(json_config),
         .graphics_config = infrastructure::GraphicsConfig::from_json(json_config),
+        .site_id = json_config.at("site_id").get<int>(),
         .web_server_config = infrastructure::WebServerConfig::from_json(json_config)
     };
     auto service = service::EmbeddedService::Create(service_config);

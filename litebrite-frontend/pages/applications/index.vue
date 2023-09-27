@@ -13,7 +13,6 @@ const loading = ref(false);
 
 const handleSiteSelection = async (site: Site) => {
   loading.value = true;
-  console.log(site)
   await AsyncTimeout(500);
   await siteStore.setCurrentSiteId(site.id);
   loading.value = false;
@@ -25,22 +24,19 @@ definePageMeta({
 </script>
 
 <template>
-  <div class="login__wrapper">
     <v-card
-      class="login__body"
       min-width="400px"
       variant="outlined"
       :loading="loading"
     >
       <v-card-title 
         v-text="'Light Controller'"
-        class="login__title"
       />
       <v-card-subtitle
         v-text="'Select Application'"
-        class="login__title mb-2"
+        class="mb-2"
       />
-      <v-card-text class="login__body">
+      <v-card-text>
         <v-list 
             color="secondary"
             nav
@@ -60,9 +56,5 @@ definePageMeta({
           </v-list>
       </v-card-text>
     </v-card>
-  </div>
 </template>
 
-<style scoped>
-
-</style>

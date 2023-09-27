@@ -14,6 +14,7 @@
 
 #include "domain/user.hpp"
 #include "domain/site.hpp"
+#include "domain/display.hpp"
 
 
 namespace infrastructure {
@@ -73,6 +74,12 @@ namespace infrastructure {
         [[nodiscard]] std::vector<domain::Site> GetAllSites();
         [[nodiscard]] bool UpdateSite(const domain::User &user);
         [[nodiscard]] bool DeleteSite(const domain::User &user);
+
+        /* Display CRUD */
+        [[nodiscard]] bool CreateDisplay(const domain::Display &display, const int site_id);
+        [[nodiscard]] bool CreateOrUpdateDisplay(const domain::Display &display, const int site_id);
+        [[nodiscard]] domain::DisplayPtr GetDisplay(const int site_id);
+        [[nodiscard]] bool DeleteDisplay(const int site_id);
 
         // no copy assignment, no empty assignment
         Db() = delete;

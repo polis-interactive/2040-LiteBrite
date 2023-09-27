@@ -9,10 +9,10 @@ definePageMeta({
 <template>
   <generic-message>
     <p class="text-subtitle-1 mt-2">
-      If you're seeing this, I'm just as suprised as you are...
+      UNAUTHROIZED ACCESS
     </p>
-    <p class="mt-2">
-      Try removing the "internal guard" bit from you're URL bar. If that doesn't work, contact broose or something...
+    <p class="mt-1">
+      If you think this was a mistake, or need to make an account, contact broose!
     </p>
   </generic-message>
 </template>

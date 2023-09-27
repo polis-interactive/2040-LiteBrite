@@ -142,9 +142,11 @@ namespace crow
                 if (pkey_itr == _public_keys.end()) {
                     throw jwt::error::token_verification_exception();
                 }
+                // use a 5-minute leeway; was getting problems with auth0's clocks being ahead
                 jwt::verify<traits>()
                     .allow_algorithm(jwt::algorithm::rs256{pkey_itr->second})
                     .with_issuer(_issuer + '/')
+                    .leeway(60UL * 5)
                     .with_audience(_audience)
                     .verify(decoded_token)
                 ;

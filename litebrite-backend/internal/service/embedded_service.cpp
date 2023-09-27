@@ -4,27 +4,33 @@
 
 #include "embedded_service.hpp"
 
+#include <utility>
+
 namespace service {
 
     EmbeddedServicePtr EmbeddedService::Create(const service::EmbeddedConfig &config) {
-        auto embedded_service = std::make_shared<EmbeddedService>();
-        embedded_service->initialize(config);
+        auto embedded_service = std::make_shared<EmbeddedService>(config);
+        embedded_service->initialize();
         return embedded_service;
     }
 
-    EmbeddedService::EmbeddedService(): _is_started(false) {}
+    EmbeddedService::EmbeddedService(service::EmbeddedConfig config): _config(std::move(config)), _is_started(false) {}
 
-    void EmbeddedService::initialize(const service::EmbeddedConfig &config) {
-        _asio_context = infrastructure::AsioContext::Create(config.asio_context_config);
-        _art_net = infrastructure::ArtNet::Create(config.art_net_config, _asio_context->GetContext());
-        _graphics = infrastructure::Graphics::Create(config.graphics_config, shared_from_this());
-        _db = infrastructure::Db::Create(config.db_config, shared_from_this());
+    void EmbeddedService::initialize() {
+        _db = infrastructure::Db::Create(_config.db_config, shared_from_this());
         if (_db == nullptr) {
             throw std::runtime_error("Unable to startup db");
         }
+
+        auto db_display = _db->GetDisplay(_config.site_id);
+
+        _asio_context = infrastructure::AsioContext::Create(_config.asio_context_config);
+        _art_net = infrastructure::ArtNet::Create(_config.art_net_config, _asio_context->GetContext());
+        _graphics = infrastructure::Graphics::Create(_config.graphics_config, shared_from_this(), std::move(db_display));
+
         // web server goes last as it relies on other services
         _web_server = infrastructure::WebServer::Create(
-            config.web_server_config, _db, shared_from_this()
+            _config.web_server_config, _db, shared_from_this()
         );
     }
 
@@ -60,6 +66,19 @@ namespace service {
 
     void EmbeddedService::PostGraphicsUpdate(utils::SizedBufferPtr &&pixels) {
         _art_net->Post(std::move(pixels));
+    }
+
+    domain::Display EmbeddedService::GetDefaultDisplay() {
+        return _config.graphics_config.default_display;
+    }
+
+    void EmbeddedService::SetCurrentDisplay(const domain::Display &display) {
+        _graphics->SetDisplay(display);
+    }
+
+    domain::Display EmbeddedService::ResetCurrentDisplay() {
+        _graphics->SetDisplay(_config.graphics_config.default_display);
+        return _config.graphics_config.default_display;
     }
 
 }

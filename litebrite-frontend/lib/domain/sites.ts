@@ -35,3 +35,8 @@ export const TryGetSitesFromObjectArray = (sites: Array<any>): Array<Site> | nul
         return null;
     }
 }
+
+export interface SiteRote {
+    display: string,
+    slug: string
+}

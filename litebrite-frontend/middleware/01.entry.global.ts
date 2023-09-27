@@ -1,5 +1,4 @@
 import { useSiteStore } from "~/stores/site"
-import { useUserStore } from "~/stores/user"
 import { useAppStore } from "~/stores/app"
 
 import { InternalNavigateTo } from '~/lib/utils'
@@ -26,6 +25,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
     }
     return;
   } else if (to.path === '/logout') {
+    // should be handled by component, so shoulnd't get here really. Just a backup
     const auth0 = await useAuth0();
     await auth0.value.logout();
     // we can just return because of the redirect
@@ -34,7 +34,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   const siteStore = useSiteStore();
   if (!appStore.hasIdentified || !siteStore.hasAnySites) {
     // should probably differentiate between hasIdentified failing (500) and hasAnySites (401)
-    return InternalNavigateTo("/unauthroized");
+    return InternalNavigateTo("/unauthorized");
   }
   // make sure user is redirected to their current site, or the application selection screen
   if (siteStore.hasCurrentSite) {

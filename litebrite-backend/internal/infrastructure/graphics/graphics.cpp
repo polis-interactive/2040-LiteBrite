@@ -8,18 +8,22 @@
 
 namespace infrastructure {
 
-    GraphicsPtr Graphics::Create(const GraphicsConfig &config, GraphicsManagerPtr manager) {
-        auto graphics = std::make_shared<Graphics>(config, std::move(manager));
+    GraphicsPtr Graphics::Create(
+        const GraphicsConfig &config, GraphicsManagerPtr manager, domain::DisplayPtr &&db_display
+    ) {
+        auto graphics = std::make_shared<Graphics>(config, std::move(manager), std::move(db_display));
         return std::move(graphics);
     }
 
-    Graphics::Graphics(const GraphicsConfig &config, GraphicsManagerPtr manager):
+    Graphics::Graphics(
+        const GraphicsConfig &config, GraphicsManagerPtr manager, domain::DisplayPtr &&db_display
+    ):
         _manager(std::move(manager))
     {
 
         const auto &layout = config.installation_layout;
         const auto &conf = config.installation_config;
-        const auto &display = config.default_display;
+        const auto &display = db_display != nullptr ? *db_display : config.default_display;
 
         generateBuffers(layout.universes, conf.buffer_count);
 
@@ -32,14 +36,24 @@ namespace infrastructure {
             }
         }
 
-        _frame_time = utils::QuickDuration(1.0 / display.fps);
+        _frame_time = utils::QuickDuration(1.0 / conf.fps.value_or(30.0));
 
+        SetDisplay(display);
+    }
+
+    void Graphics::SetDisplay(const domain::Display &display) {
+        // I should lock a mutex here but meh
         _display_type = display.type;
-        if (display.rgb_color.has_value()) {
-            _rgb_color = display.rgb_color.value();
-        }
-        if (display.rgbw_color.has_value()) {
-            _rgbw_color = display.rgbw_color.value();
+        switch (_display_type) {
+            case domain::DisplayType::RGB:
+            case domain::DisplayType::RGB_WITH_W_INTERPOLATION:
+                _rgbw_color = {0};
+                _rgb_color = display.rgb_color.value();
+                break;
+            case domain::DisplayType::RGBW:
+                _rgb_color = {0};
+                _rgbw_color = display.rgbw_color.value();
+                break;
         }
     }
 
@@ -141,10 +155,14 @@ namespace infrastructure {
     void GraphicsBuffer::RenderColor(const domain::CRGB &c_rgb) {
         // Fill the first 3 bytes.
         std::memcpy((void *) _data.data(), c_rgb.raw, 3);
+        // remove w value if necessary
+        _data[3] = 0;
+
+        // really should be checking here for rgb / rgbw
 
         // Now copy in doubling sizes.
-        size_t bytes_filled = 3;
-        while (bytes_filled + 3 < _size) {
+        size_t bytes_filled = 4;
+        while (bytes_filled + 4 < _size) {
             size_t bytes_to_copy = std::min(bytes_filled, _size - bytes_filled);
             std::memcpy((void *) (_data.data() + bytes_filled), _data.data(), bytes_to_copy);
             bytes_filled += bytes_to_copy;
