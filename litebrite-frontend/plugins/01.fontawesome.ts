@@ -9,24 +9,39 @@ import {
 
 import {
     fas,
-    faUser, faRightFromBracket
+    faUser, faRightFromBracket, faTrash, faFloppyDisk, faArrowsRotate
 } from '@fortawesome/pro-solid-svg-icons'
+
+import {
+    fad,
+    faCaretUp
+} from '@fortawesome/pro-duotone-svg-icons'
 
 import {
     fass,
     faSwap
 } from '@fortawesome/sharp-solid-svg-icons'
 
+
 library.add(
     fas,
     faUser,
-    faRightFromBracket
+    faRightFromBracket,
+    faTrash,
+    faFloppyDisk,
+    faArrowsRotate
+)
+
+library.add(
+    fad,
+    faCaretUp
 )
 
 library.add(
     fass,
     faSwap
 )
+
 
 config.autoAddCss = false
 

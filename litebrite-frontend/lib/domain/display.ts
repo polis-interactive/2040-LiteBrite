@@ -5,7 +5,7 @@ import {
 
 const AllDisplayTypes = ['RGB', 'RGBW', 'RGB_WITH_W_INTERPOLATION', 'COLOR_TEMPERATURE'] as const;
 type DisplayTypesTuple = typeof AllDisplayTypes;
-type DisplayType = DisplayTypesTuple[number];
+export type DisplayType = DisplayTypesTuple[number];
 
 export interface DisplayStyle {
     type: DisplayType,
@@ -13,28 +13,40 @@ export interface DisplayStyle {
     description: string
 }
 
-export const DisplayTypeToStyle: Record<DisplayType, DisplayStyle> = {
-    'RGB': {
-        type: 'RGB',
-        name: 'RGB',
-        description: 'Plain RGB with W turned off'
+export const DisplayTypeToStyle: Record<DisplayType, () => DisplayStyle> = {
+    'RGB': () => {
+        return {
+            type: 'RGB',
+            name: 'RGB',
+            description: 'Plain RGB with W turned off'
+        }
     },
-    'RGBW': {
-        type: 'RGBW',
-        name: 'RGBW',
-        description: 'Individually controlled RGBW channels'
+    'RGBW': () => {
+        return {
+            type: 'RGBW',
+            name: 'RGBW',
+            description: 'Individually controlled RGBW channels'
+        }
     },
-    'RGB_WITH_W_INTERPOLATION': {
-        type: 'RGB_WITH_W_INTERPOLATION',
-        name: 'Interpolated RGB',
-        description: 'RGB interpolated from W component; saves on LED lifetime compared with RGB but may look off'
+    'RGB_WITH_W_INTERPOLATION': () => {
+        return {
+            type: 'RGB_WITH_W_INTERPOLATION',
+            name: 'Interpolated RGB',
+            description: 'RGB interpolated from W component; may require callibration'
+        }
     },
-    'COLOR_TEMPERATURE': {
-        type: 'COLOR_TEMPERATURE',
-        name: 'Color Temperature',
-        description: 'Comparable to standard light bulb appearance'
+    'COLOR_TEMPERATURE': () => {
+        return {
+            type: 'COLOR_TEMPERATURE',
+            name: 'Color Temperature',
+            description: 'Comparable to standard light bulb appearance'
+        }
     }
 }
+
+export const AllDisplayStyles: DisplayStyle[] = AllDisplayTypes.map(
+    (type: DisplayType) => DisplayTypeToStyle[type]()
+);
 
 export interface Display {
     style: DisplayStyle,
@@ -42,6 +54,54 @@ export interface Display {
     rgbw_color?: CRGBW,
     color_temperature?: number
 }
+
+const AllDisplayValues = ['RGB', 'RGBW', 'COLOR_TEMPERATURE'] as const;
+type DisplayValuesTuple = typeof AllDisplayValues;
+export type DisplayValue = DisplayValuesTuple[number];
+
+export const GetDisplayValue = (displayType: DisplayType): DisplayValue => {
+    switch(displayType) {
+        case "RGB":
+        case "RGB_WITH_W_INTERPOLATION":
+            return 'RGB';
+        case "RGBW":
+            return 'RGBW';
+        case "COLOR_TEMPERATURE":
+            return 'COLOR_TEMPERATURE';
+    }
+}
+
+export const ChangeDisplayType = (newDisplayType: DisplayType, oldDisplay: Display): Display => {
+    const newDisplayValue = GetDisplayValue(newDisplayType);
+    const oldDisplayValue = GetDisplayValue(oldDisplay.style.type);
+    const newDisplay: Display = { style: DisplayTypeToStyle[newDisplayType]() };
+    if (newDisplayValue !== oldDisplayValue) {
+        switch (newDisplayValue) {
+            case "RGB":
+                newDisplay.rgb_color = { r: 255, g: 64, b: 127 };
+                break;
+            case "RGBW":
+                newDisplay.rgbw_color = { r: 100, g: 15, b: 70, w: 127 };
+                break;
+            case "COLOR_TEMPERATURE":
+                newDisplay.color_temperature = 4500;
+                break;
+        }
+    } else {
+        switch (newDisplayValue) {
+            case "RGB":
+                newDisplay.rgb_color = { ...oldDisplay.rgb_color as CRGB };
+                break;
+            case "RGBW":
+                newDisplay.rgbw_color = { ...oldDisplay.rgbw_color as CRGBW };
+                break;
+            case "COLOR_TEMPERATURE":
+                newDisplay.color_temperature = oldDisplay.color_temperature;
+                break;
+        }
+    }
+    return newDisplay;
+} 
 
 export type DisplayComparator = (a: Display, b: Display) => boolean;
 
@@ -79,7 +139,7 @@ export const DisplayFromDTO = (displayDto: DisplayDTO): Display | null => {
         return null;
     }
     const displayType = displayDto.type as DisplayType;
-    const display: Display = { style: DisplayTypeToStyle[displayType] }
+    const display: Display = { style: DisplayTypeToStyle[displayType]() }
     switch (displayType) {
         case "RGB":
         case "RGB_WITH_W_INTERPOLATION":
@@ -116,6 +176,8 @@ export const DisplayFromDTO = (displayDto: DisplayDTO): Display | null => {
 export interface DisplayState {
     hasLoaded: boolean
     loadingRemote: boolean
+    deletingRemote: boolean
+    savingRemote: boolean
     localDisplay: Display | null
     remoteDisplay: Display | null
     remoteIsDefault: boolean

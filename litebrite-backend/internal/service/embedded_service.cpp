@@ -76,8 +76,9 @@ namespace service {
         _graphics->SetDisplay(display);
     }
 
-    void EmbeddedService::ResetCurrentDisplay() {
+    domain::Display EmbeddedService::ResetCurrentDisplay() {
         _graphics->SetDisplay(_config.graphics_config.default_display);
+        return _config.graphics_config.default_display;
     }
 
 }

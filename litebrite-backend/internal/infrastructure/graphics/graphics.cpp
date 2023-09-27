@@ -155,10 +155,14 @@ namespace infrastructure {
     void GraphicsBuffer::RenderColor(const domain::CRGB &c_rgb) {
         // Fill the first 3 bytes.
         std::memcpy((void *) _data.data(), c_rgb.raw, 3);
+        // remove w value if necessary
+        _data[3] = 0;
+
+        // really should be checking here for rgb / rgbw
 
         // Now copy in doubling sizes.
-        size_t bytes_filled = 3;
-        while (bytes_filled + 3 < _size) {
+        size_t bytes_filled = 4;
+        while (bytes_filled + 4 < _size) {
             size_t bytes_to_copy = std::min(bytes_filled, _size - bytes_filled);
             std::memcpy((void *) (_data.data() + bytes_filled), _data.data(), bytes_to_copy);
             bytes_filled += bytes_to_copy;

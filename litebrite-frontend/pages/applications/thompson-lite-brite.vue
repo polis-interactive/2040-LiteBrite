@@ -6,10 +6,6 @@ const appPages: Array<AppPage> = [
   {
     display: 'Display',
     slug: 'display'
-  },
-  {
-    display: 'Settings',
-    slug: 'settings'
   }
 ]
 

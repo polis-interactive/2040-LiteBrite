@@ -55,7 +55,7 @@ namespace infrastructure {
     struct WebServerManager {
         virtual domain::Display GetDefaultDisplay() = 0;
         virtual void SetCurrentDisplay(const domain::Display &display) = 0;
-        virtual void ResetCurrentDisplay() = 0;
+        virtual domain::Display ResetCurrentDisplay() = 0;
     };
     typedef std::shared_ptr<WebServerManager> WebServerManagerPtr;
 

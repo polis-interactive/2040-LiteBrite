@@ -11,6 +11,8 @@ const selectedPage: Ref<null | AppPage> = ref(null);
 const doPageNavigation = async (newAppPage: AppPage) => {
     await appStore.setAppPage(newAppPage.slug);
 }
+
+const route = useRoute()
 </script>
 
 <template>

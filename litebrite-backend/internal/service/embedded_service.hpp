@@ -45,7 +45,7 @@ namespace service {
         // webserver
         domain::Display GetDefaultDisplay() final;
         void SetCurrentDisplay(const domain::Display &display) final;
-        void ResetCurrentDisplay() final;
+        domain::Display ResetCurrentDisplay() final;
 
         // no copy assignment
         EmbeddedService (const EmbeddedService&) = delete;

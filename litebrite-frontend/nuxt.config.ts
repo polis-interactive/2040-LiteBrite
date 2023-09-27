@@ -5,6 +5,8 @@ import { aliases, fa } from 'vuetify/iconsets/fa'
 const Auth0DevConfig = {
   domain: "polis-auth-dev.us.auth0.com",
   clientId: "5J8Kg0rSQ6PsyBoSZ8KRg2uLEa5sPK4D",
+  cacheLocation: 'localstorage',
+  useRefreshTokens: true,
   authorizationParams: {
     redirect_uri: "http://localhost:3000/applications",
     audience: "http://localhost:8000"
@@ -14,6 +16,8 @@ const Auth0DevConfig = {
 const Auth0ProdConfig = {
   domain: "polis-auth.us.auth0.com",
   clientId: "J11vLH9vHEJ9sMdSWWitYm9HjVW3U8V5",
+  cacheLocation: 'localstorage',
+  useRefreshTokens: true,
   authorizationParams: {
     redirect_uri: "https://lighting.polis.tv/applications",
     audience: "https://lighting.polis.tv/api"
@@ -66,11 +70,6 @@ export default defineNuxtConfig({
       gzip: true,
       brotli: false
     },
-    prerender: {
-      failOnError: false,
-      crawlLinks: false,
-      routes: ['/', '/login']
-    }
   },
   vuetify: {
     vuetifyOptions: {

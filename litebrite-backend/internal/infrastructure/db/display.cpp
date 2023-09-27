@@ -44,10 +44,9 @@ namespace infrastructure {
     }
 
     bool Db::DeleteDisplay(const int site_id) {
-        SQLite::Statement query(*_db, "SELECT display FROM displays WHERE site_id = ?");
+        SQLite::Statement query(*_db, "DELETE FROM displays WHERE site_id = ?");
         query.bind(1, site_id);
-        // we technically don't care if this does anything
-        query.exec();
+        query.executeStep();
         return true;
     }
 }

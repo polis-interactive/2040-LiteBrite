@@ -37,6 +37,8 @@ namespace infrastructure {
 
     void WebServer::handleSiteDisplayUpdate(const crow::request &req, crow::response &res) {
         auto ctx = _app->get_context<crow::AuthorizeSiteHandler>(req);
+        nlohmann::json j_res;
+        j_res["success"] = true;
         try {
             const auto display = domain::Display::from_json(ctx.params["display"]);
             const auto success = _db->CreateOrUpdateDisplay(display, ctx.site->id);
@@ -44,8 +46,7 @@ namespace infrastructure {
                 throw std::runtime_error("Failed to insert display into db");
             }
             _manager->SetCurrentDisplay(display);
-            res.code = crow::status::OK;
-            res.body = "SUCCESS";
+            sendJson(res, j_res);
         } catch (nlohmann::json::exception& e) {
             std::cerr << e.what() << std::endl;
             res.code = crow::status::BAD_REQUEST;
@@ -67,12 +68,13 @@ namespace infrastructure {
         if (!success) {
             res.code = crow::status::BAD_REQUEST;
             res.body = "WebServer::handleSiteDisplayDelete nothing to delete...";
-        } else {
-            _manager->ResetCurrentDisplay();
-            res.code = crow::status::OK;
-            res.body = "SUCCESS";
+            res.end();
+            return;
         }
-        res.end();
+        nlohmann::json j_res;
+        auto default_display = _manager->ResetCurrentDisplay();
+        j_res["display"] = default_display.to_json();
+        sendJson(res, j_res);
     }
 
 
